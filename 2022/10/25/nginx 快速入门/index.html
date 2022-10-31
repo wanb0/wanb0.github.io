@@ -169,47 +169,47 @@ Nginx (engine x) 是一个高性能的HTTP和反向代理web服务器，同时�
 </ul>
 <h3 id="1-2-nginx产生的原因"><a href="#1-2-nginx产生的原因" class="headerlink" title="1.2 nginx产生的原因"></a>1.2 nginx产生的原因</h3><ul>
 <li><p>一个项目在初步开发的时候，并发量比较少，所以在低并发的情况下，一个jar包启动应用就够了，然后内部tomcat返回内容给用户。</p>
-<p><img src="/../image/nginx1.png"></p>
+<p><img src="/../image/ecs/nginx1.png"></p>
 </li>
 </ul>
 <ul>
 <li><p>随着项目的使用和开展，使用平台的用户越来越多了，并发量慢慢增大了，这时候一台服务器满足不了我们的需求了</p>
-<p><img src="/../image/nginx2.png"></p>
+<p><img src="/../image/ecs/nginx2.png"></p>
 </li>
 <li><p>于是我们横向扩展，又增加了服务器。这个时候几个项目启动在不同的服务器上，用户要访问，就需要增加一个代理服务器了，通过代理服务器来帮我们转发和处理请求。</p>
-<p><img src="/../image/nginx3.png"></p>
+<p><img src="/../image/ecs/nginx3.png"></p>
 </li>
 </ul>
 <pre><code>我们希望这个代理服务器可以帮助我们接收用户的请求，然后将用户的请求按照规则帮我们转发到不同的服务器节点之上。这个过程用户是无感知的，用户并不知道是哪个服务器返回的结果，我们还希望他可以按照服务器的性能提供不同的权重选择。保证最佳体验！所以我们使用了Nginx。
 </code></pre>
 <h2 id="二-nginx的代理"><a href="#二-nginx的代理" class="headerlink" title="二.nginx的代理"></a>二.nginx的代理</h2><h3 id="2-1-nginx-的正向代理"><a href="#2-1-nginx-的正向代理" class="headerlink" title="2.1 nginx 的正向代理"></a>2.1 nginx 的正向代理</h3><ul>
-<li><p>正向代理：代理是代理客户端的<br><img src="/../image/zhengxiangdaili.png"></p>
+<li><p>正向代理：代理是代理客户端的<br><img src="/../image/ecs/zhengxiangdaili.png"></p>
 </li>
 <li><p>反向代理 ：代理是代理服务器的，所以用户是无感知的，比如，百度的服务器是在不同的服务器上，比如北京上海深圳都有百度的服务器，但是我们只需要搜索baidu.com就可以。</p>
-<p><img src="/../image/fanxiangdaili.png"></p>
+<p><img src="/../image/ecs/fanxiangdaili.png"></p>
 </li>
 </ul>
 <h3 id="2-2-nginx-的负载策略"><a href="#2-2-nginx-的负载策略" class="headerlink" title="2.2 nginx 的负载策略"></a>2.2 nginx 的负载策略</h3><p><strong>Nginx提供的负载均衡策略有2种：内置策略和扩展策略。内置策略为轮询，加权轮询，Ip hash。扩展策略，就天马行空，只有你想不到的没有他做不到的。</strong></p>
 <ul>
 <li><p>轮询</p>
-<p><img src="/../image/lunxun.png"></p>
+<p><img src="/../image/ecs/lunxun.png"></p>
 </li>
 <li><p>加权轮询，因为可能不同服务器性能不一样，能接收的请求数量不同</p>
-<p><img src="/../image/jiaquanlunxun.png"></p>
+<p><img src="/../image/ecs/jiaquanlunxun.png"></p>
 </li>
 <li><p>iphash对客户端请求的ip进行hash操作，然后根据hash结果将同一个客户端ip的请求分发给同一台服务器进行处理，可以解决session不共享的问题。</p>
-<p><img src="/../image/iph.png"></p>
+<p><img src="/../image/ecs/iph.png"></p>
 </li>
 <li><p>动静分离，在我们的软件开发中，有些请求是需要后台处理的，有些请求是不需要经过后台处理的（如：css、html、jpg、js等等文件），这些不需要经过后台处理的文件称为静态文件。让动态网站里的动态网页根据一定规则把不变的资源和经常变的资源区分开来，动静资源做好了拆分以后，我们就可以根据静态资源的特点将其做缓存操作。提高资源响应的速度。</p>
 </li>
 </ul>
-<p>​       <img src="/../image/dongjingfenli.png"></p>
+<p>​       <img src="/../image/ecs/dongjingfenli.png"></p>
 <h2 id="三-nginx的安装和使用"><a href="#三-nginx的安装和使用" class="headerlink" title="三 . nginx的安装和使用"></a>三 . nginx的安装和使用</h2><ul>
 <li><p>去官网进行下载</p>
 <pre><code>http://nginx.org/en/download.html
 </code></pre>
 <p>选择正确的版本，我这里下载的是linux版本</p>
-<p><img src="/../image/nginxweb.png"></p>
+<p><img src="/../image/ecs/nginxweb.png"></p>
 </li>
 <li><p>把下载好的压缩包通过命令或者SFTP传到服务器上，cd到传输的目录下，进行解压安装</p>
 </li>
@@ -226,24 +226,24 @@ Nginx (engine x) 是一个高性能的HTTP和反向代理web服务器，同时�
 </ul>
 <pre><code class="bash">make install #安装
 </code></pre>
-<p><img src="/../image/nginxinstall.png"></p>
+<p><img src="/../image/ecs/nginxinstall.png"></p>
 <ul>
 <li><p>到安装目录下的objs进行启动nginx</p>
-<p><img src="/../image/nginxmulu.png"></p>
+<p><img src="/../image/ecs/nginxmulu.png"></p>
 </li>
 <li><p>输入启动命令，没有报错就是启动成功</p>
-<p><img src="/../image/nginxstart.png"></p>
+<p><img src="/../image/ecs/nginxstart.png"></p>
 <p>去浏览器检查默认的80端口，出现下面这个就是启动成功啦！云安全组也要放行80端口</p>
-<p><img src="/../image/welcomenginx.png"></p>
+<p><img src="/../image/ecs/welcomenginx.png"></p>
 <p>如何连接不上，检查阿里云安全组是否开放端口，或者服务器防火墙是否开放80端口:</p>
-<p><img src="/../image/duankou80.png"></p>
+<p><img src="/../image/ecs/duankou80.png"></p>
 </li>
 </ul>
 <ul>
 <li><p><strong>配置监听</strong></p>
 <pre><code>nginx的配置文件是conf目录下的nginx.conf，默认配置的nginx监听的端口为80，如果80端口被占用可以修改为未被占用的端口即可。
 </code></pre>
-<p><img src="/../image/peizhi.png"></p>
+<p><img src="/../image/ecs/peizhi.png"></p>
 <pre><code>当我们修改了nginx的配置文件nginx.conf 时，不需要关闭nginx后重新启动nginx，只需要执行命令 nginx -s reload 即可让改动生效
 </code></pre>
 </li>
@@ -312,12 +312,12 @@ firewall-cmd --reload
 </code></pre>
 <ul>
 <li><p>启动两个端口的项目</p>
-<p><img src="/../image/qiyongshuangduankou.png"></p>
+<p><img src="/../image/ecs/qiyongshuangduankou.png"></p>
 </li>
 <li><p>启动nginx</p>
 </li>
 <li><p>进行测试</p>
-<p><img src="/../image/testnginx.png"></p>
+<p><img src="/../image/ecs/testnginx.png"></p>
 </li>
 </ul>
 
