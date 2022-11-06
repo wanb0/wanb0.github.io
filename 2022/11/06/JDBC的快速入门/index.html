@@ -116,13 +116,13 @@
                 
                 <span>
                     <b class="iconfont icon-text2"></b> <i>文章字数</i>
-                    9.2k
+                    10k
                 </span>
                 
                 
                 <span>
                     <b class="iconfont icon-timer__s"></b> <i>阅读约需</i>
-                    8 mins.
+                    9 mins.
                 </span>
                 
                 
@@ -230,7 +230,7 @@
 <h2 id="8-释放资源"><a href="#8-释放资源" class="headerlink" title="8.释放资源"></a>8.释放资源</h2><pre><code class="java">stmt.close();
 conn.close();
 </code></pre>
-<h1 id="四-JDBC-API"><a href="#四-JDBC-API" class="headerlink" title="四.JDBC API"></a>四.JDBC API</h1><h2 id="1-DriverManager"><a href="#1-DriverManager" class="headerlink" title="1.DriverManager"></a>1.DriverManager</h2><ul>
+<h1 id="四-JDBCAPI"><a href="#四-JDBCAPI" class="headerlink" title="四.JDBCAPI"></a>四.JDBCAPI</h1><h2 id="1-DriverManager"><a href="#1-DriverManager" class="headerlink" title="1.DriverManager"></a>1.DriverManager</h2><ul>
 <li><p>注册驱动</p>
 <p>sql的jar包中可以自动注册驱动</p>
 <p><img src="/../image/jdbc/jdbc2.png"></p>
@@ -261,8 +261,39 @@ conn.close();
 </ul>
 </li>
 <li><p>管理事务</p>
+<p>事务是一组数据库操作语句（DML），一组要么全部成功，要么全部失败。</p>
+<p>事务是多个操作构成的实现一个事情的整体。</p>
+<ul>
+<li><p><strong>MySQL事务管理</strong></p>
+<pre><code>开启事务:BEGIN;
+提交事务:COMMIT;
+回滚事务:ROLLBACk;
+
+MySQL默认自动提交事务
+</code></pre>
+</li>
+<li><p><strong>JDBC事务管理：</strong>Connection接口中定义了3个对应的方法</p>
+<pre><code>开启事务：setAutoCommit(Boolean autoCommit)  ture为自动提交 false为手动提交，即为开启事务
+提交事务：commit()
+回滚事务：rollback()
+</code></pre>
 </li>
 </ul>
+</li>
+</ul>
+<h2 id="3-Statement"><a href="#3-Statement" class="headerlink" title="3.Statement"></a>3.Statement</h2><ul>
+<li>执行sql语句</li>
+</ul>
+<pre><code class="java">int executeUpdata(sql):执行DML\DDL语句  DML对表操作  DDL对于库的操作
+返回值：（1）DDL语句影响的行数（2）DDL语句执行成功也可能返回0
+</code></pre>
+<pre><code class="java">Resulet executeQuery(sql):执行DQL语句
+返回值：ResultSET结果集对象
+</code></pre>
+<h2 id="4"><a href="#4" class="headerlink" title="4."></a>4.</h2><p> ResultSet(结果集对象)作用：</p>
+<p>1.封装了DQL查询语句的结果</p>
+<pre><code class="java">ResultSet
+</code></pre>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls"
@@ -326,7 +357,7 @@ conn.close();
             <div class="box sticky animated fadeInRight faster">
                 <div id="toc" class="subbox">
                     <h4>目录</h4>
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80-JDBC%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">一. JDBC是什么</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C-JDBC%E7%9A%84%E9%A9%B1%E5%8A%A8%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">二.JDBC的驱动类型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89-%E4%BD%BF%E7%94%A8%E6%AD%A5%E9%AA%A4"><span class="toc-number">3.</span> <span class="toc-text">三. 使用步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%BD%BD%E5%85%A5JDBC%E9%A9%B1%E5%8A%A8"><span class="toc-number">3.1.</span> <span class="toc-text">1. 载入JDBC驱动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%B3%A8%E5%86%8C%E9%A9%B1%E5%8A%A8"><span class="toc-number">3.2.</span> <span class="toc-text">2. 注册驱动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5"><span class="toc-number">3.3.</span> <span class="toc-text">3.获取连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%AE%9A%E4%B9%89sql%E8%AF%AD%E5%8F%A5"><span class="toc-number">3.4.</span> <span class="toc-text">4.定义sql语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%8E%B7%E5%8F%96%E6%89%A7%E8%A1%8Csql%E7%9A%84%E5%AF%B9%E8%B1%A1Statement"><span class="toc-number">3.5.</span> <span class="toc-text">5.获取执行sql的对象Statement</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%89%A7%E8%A1%8Csql"><span class="toc-number">3.6.</span> <span class="toc-text">6.执行sql</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E6%89%93%E5%8D%B0%E7%BB%93%E6%9E%9C"><span class="toc-number">3.7.</span> <span class="toc-text">7.打印结果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E9%87%8A%E6%94%BE%E8%B5%84%E6%BA%90"><span class="toc-number">3.8.</span> <span class="toc-text">8.释放资源</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B-JDBC-API"><span class="toc-number">4.</span> <span class="toc-text">四.JDBC API</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-DriverManager"><span class="toc-number">4.1.</span> <span class="toc-text">1.DriverManager</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Connection"><span class="toc-number">4.2.</span> <span class="toc-text">2. Connection</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80-JDBC%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">一. JDBC是什么</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C-JDBC%E7%9A%84%E9%A9%B1%E5%8A%A8%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">二.JDBC的驱动类型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89-%E4%BD%BF%E7%94%A8%E6%AD%A5%E9%AA%A4"><span class="toc-number">3.</span> <span class="toc-text">三. 使用步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%BD%BD%E5%85%A5JDBC%E9%A9%B1%E5%8A%A8"><span class="toc-number">3.1.</span> <span class="toc-text">1. 载入JDBC驱动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%B3%A8%E5%86%8C%E9%A9%B1%E5%8A%A8"><span class="toc-number">3.2.</span> <span class="toc-text">2. 注册驱动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5"><span class="toc-number">3.3.</span> <span class="toc-text">3.获取连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%AE%9A%E4%B9%89sql%E8%AF%AD%E5%8F%A5"><span class="toc-number">3.4.</span> <span class="toc-text">4.定义sql语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%8E%B7%E5%8F%96%E6%89%A7%E8%A1%8Csql%E7%9A%84%E5%AF%B9%E8%B1%A1Statement"><span class="toc-number">3.5.</span> <span class="toc-text">5.获取执行sql的对象Statement</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%89%A7%E8%A1%8Csql"><span class="toc-number">3.6.</span> <span class="toc-text">6.执行sql</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E6%89%93%E5%8D%B0%E7%BB%93%E6%9E%9C"><span class="toc-number">3.7.</span> <span class="toc-text">7.打印结果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E9%87%8A%E6%94%BE%E8%B5%84%E6%BA%90"><span class="toc-number">3.8.</span> <span class="toc-text">8.释放资源</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B-JDBCAPI"><span class="toc-number">4.</span> <span class="toc-text">四.JDBCAPI</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-DriverManager"><span class="toc-number">4.1.</span> <span class="toc-text">1.DriverManager</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Connection"><span class="toc-number">4.2.</span> <span class="toc-text">2. Connection</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Statement"><span class="toc-number">4.3.</span> <span class="toc-text">3.Statement</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4"><span class="toc-number">4.4.</span> <span class="toc-text">4.</span></a></li></ol></li></ol>
                 </div>
             </div>
             
