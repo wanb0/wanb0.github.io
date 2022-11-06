@@ -5,12 +5,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>阿里云之初体验 - Wan bo blog</title>
+    <title>JDBC - Wan bo blog</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="TriDiamond Obsidian,"> 
-    <meta name="description" content="1.首次接触服务器​		本人是一名有幸刚考到电子信息专业的一名研一的学生。由于自己导师的需求，自己最近须要了解并学习web开发相关的知识，当然把web部署到服务器也是很重要的技能。于是通过了解和同学,"> 
+    <meta name="description" content="一. JDBC是什么​	JDBC(Java DataBase Connectivity) 称为Java数据库连接，它是一种用于数据库访问的应用程序API，由一组用Java语言编写的类和接口组成，有了,"> 
     <meta name="author" content="Wan BO"> 
     <link rel="alternative" href="atom.xml" title="Wan bo blog" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -74,7 +74,7 @@
     <div class="navigation animated fadeIn fast delay-1s">
         <img id="home-icon" class="icon-home" src="/img/favicon.png" alt="" data-url="http://example.com">
         <div id="play-icon" title="Play/Pause" class="iconfont icon-play"></div>
-        <h3 class="subtitle">阿里云之初体验</h3>
+        <h3 class="subtitle">JDBC</h3>
         <div class="social">
             <!--        <div class="like-icon">-->
             <!--            <a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
@@ -107,22 +107,22 @@
                 <a href="/categories/web"><b>「
                     </b>WEB<b> 」</b></a>
                 
-                十月 23, 2022
+                十一月 06, 2022
             </p>
-            <h3 class="post-title animated fadeInDown"><a href="/2022/10/23/%E9%98%BF%E9%87%8C%E4%BA%91%E4%B9%8B%E5%88%9D%E4%BD%93%E9%AA%8C/" title="阿里云之初体验" class="">阿里云之初体验</a>
+            <h3 class="post-title animated fadeInDown"><a href="/2022/11/06/JDBC%E7%9A%84%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/" title="JDBC" class="">JDBC</a>
             </h3>
             
             <p class="post-count animated fadeInDown">
                 
                 <span>
                     <b class="iconfont icon-text2"></b> <i>文章字数</i>
-                    1.9k
+                    8.2k
                 </span>
                 
                 
                 <span>
                     <b class="iconfont icon-timer__s"></b> <i>阅读约需</i>
-                    2 mins.
+                    7 mins.
                 </span>
                 
                 
@@ -135,7 +135,7 @@
             </p>
             
             
-            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li></ul>
+            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/JDBC/" rel="tag">JDBC</a></li></ul>
             
         </div>
     </div>
@@ -156,34 +156,80 @@
 <div class="article">
     <div class='main'>
         <div class="content markdown animated fadeIn">
-            <h3 id="1-首次接触服务器"><a href="#1-首次接触服务器" class="headerlink" title="1.首次接触服务器"></a>1.首次接触服务器</h3><p>​		本人是一名有幸刚考到电子信息专业的一名研一的学生。由于自己导师的需求，自己最近须要了解并学习web开发相关的知识，当然把web部署到服务器也是很重要的技能。于是通过了解和同学的推荐，他们告诉我阿里云的ECS服务器是最好用的，对小白也都非常友好，于是我抱着试试看的心态就去阿里云官网看了一下，于是就发现了，“飞天加速计划·高校学生在家实践”活动，这个活动对高校的学生非常优惠，于是我通过第一阶段的学习成功拿到了14天ECS的免费试用！</p>
-<h3 id="2-我的阿里云使用体验"><a href="#2-我的阿里云使用体验" class="headerlink" title="2.我的阿里云使用体验"></a>2.我的阿里云使用体验</h3><p>​	  通过在阿里云的第一阶段的训练，我已经可以去创建并操作一个我的实例了。<img src="/../image/ecs/p1.png"></p>
-<p>​	  创建好了第一个实例以后，我使用Terimius1工具连接到了ECS，连接过程也是非常快:</p>
-<p><img src="/../image/ecs/p2.png"></p>
-<p>​		之前说过我组租服务器，是为了web开发的学习，所以我在我的服务器通过yum安装了jdk1.8的和mysql8的开发环境，通过yum安装jdk1.8的过程还是十分的顺利，只需要一行命令即可，可以说比windows安装还要方便。</p>
-<p>​		在centos7.9上安装jdk1.8只用了以下两个命令：</p>
-<pre><code class="shell">yum list java-1.8*                   //在yum中查找可以安装的jdk版本 
-yum install java-1.8.0-openjdk* -y   //开始安装
+            <h1 id="一-JDBC是什么"><a href="#一-JDBC是什么" class="headerlink" title="一. JDBC是什么"></a>一. JDBC是什么</h1><p>​	<strong>JDBC</strong>(Java DataBase Connectivity) 称为Java数据库连接，它是一种用于数据库访问的应用程序API，由一组用Java语言编写的类和接口组成，有了JDBC就可以用统一的语法对多种关系数据库进行访问，而不用担心其数据库操作语言的差异。 有了JDBC，就不必为访问Mysql数据库专门写一个程序，为访问Oracle又专门写一个程序等等。</p>
+<p><img src="/../image/jdbc/jdbc.png"></p>
+<p>​	 <strong>JDBC的结构可划分为两层：</strong>一个是面向底层的<strong>JDBC　Driver　Interface</strong>(驱动程序管理器接口)（各数据库厂商负责实现接口），另一个是面向程序员的<strong>JDBC　API</strong>。</p>
+<p>​	使用JDBC编程，可让开发人员从复杂的驱动器调用命令和函数中解脱出来，可以致力于应用程序中的关键地方。JDBC支持不同的关系数据库，这使得程序的可移植性大大加强。JDBC　API是面向对象的，可以让用户把常用的方法封装为—个类，以备后用。但是它也有缺点，一是使用JDBC，访问数据记录的速度会受到一定程度的影响。二是JDBC结构中包含不同厂家的产品，这就给更改数据源带来了很大的麻烦。</p>
+<h1 id="二-JDBC的驱动类型"><a href="#二-JDBC的驱动类型" class="headerlink" title="二.JDBC的驱动类型"></a>二.JDBC的驱动类型</h1><p>​	JDBC的驱动程序的存在，在JAVA程序和数据库之间建立了一条通信的渠道，根据访问数据库的技术不同， JDBC 驱动程序相应地分为四种类型。不同类型的驱动程序有着不一样的特性和使用方法。</p>
+<ul>
+<li><p><strong>JDBC-ODBC桥驱动程序(JDBC-ODBC Bridge Driver)</strong></p>
+<p>此类驱动程序由JDBC-ODBC桥和一个ODBC驱动程序组成。其工作原理是，通过一段本地C代码将JDBC调用转化成ODBC调用。这一类型必须在本地计算机上先安装好ODBC驱动程序，然后通过JDBC-ODBCBridge的转换，将Java程序中使用的JDBCAPI访问指令转化成ODBCAPI指令，进而通过ODBC驱动程序调用本地数据库驱动代码完成对数据库的访问。</p>
+</li>
+<li><p><strong>部分Java的本地JDBCAPI驱动程序</strong></p>
+<p>JDBC API驱动程序(Anative API partly Java technology-enabled Driver)此类驱动程序也必须在本地计算机上先安装好特定的驱动程序(类似ODBC)，然后通过PartialJavaJDBCDriver的转换，把Java程序中使用的JDBC API转换成NativeAPI，进而存取数据库。</p>
+</li>
+<li><p><strong>纯Java的数据库中间件驱动程序</strong></p>
+<p>纯Java的数据库中间件驱动程序(Pure Java Driver for Database Middleware)使用这类驱动程序时，不需要在本地计算机上安装任何附加软件，但是必须在安装数据库管理系统的服务器端加装中间件(Middleware)，这个中间件负责所有存取数据库时必要的转换。其工作原理是：驱动程序将JDBC访问转换成与数据库无关的标准网络协议(通常是HTTP或HTTPS)送出，然后再由中间件服务器将其转换成数据库专用的访问指令，完成对数据库的操作。中间件服务器能支持对多种数据库的访问。</p>
+</li>
+<li><p><strong>纯Java的JDBC驱动程序</strong></p>
+<p>纯Java的JDBC驱动程序(Direct-to-DatabasePureJavaDriver)这类驱动程序是直接面向数据库的纯Java驱动程序，即所谓的”瘦”驱动程序。使用这类驱动程序时无需安装任何附加的软件(无论是本地计算机或是数据库服务器端)，所有存取数据库的操作都直接由JDBC驱动程序来完成，此类驱动程序能将JDBC调用转换成DBMS专用的网络协议，能够自动识别网络协议下的特殊数据库并能直接创建数据连接</p>
+</li>
+</ul>
+<h1 id="三-使用步骤"><a href="#三-使用步骤" class="headerlink" title="三. 使用步骤"></a>三. 使用步骤</h1><h2 id="1-载入JDBC驱动"><a href="#1-载入JDBC驱动" class="headerlink" title="1. 载入JDBC驱动"></a>1. 载入JDBC驱动</h2><ul>
+<li><p><strong>MySQL的驱动下载和连接方式</strong></p>
+<ul>
+<li>8.0版本的jar包下载地址，点击直接下载。</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.11.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.11.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.12.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.12.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.13.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.13.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.14.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.14.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.15.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.15.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.16.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.16.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.17.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.17.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.18.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.18.zip</a><br><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.19.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.19.zip</a><br><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.20.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.20.zip</a><br><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.21.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.21.zip</a><br><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.22.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.22.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.23.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.23.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.24.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.24.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.25.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.25.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.26.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.26.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.27.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.27.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.28.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.28.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.29.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.29.zip</a></p>
+<ul>
+<li>5.0版本的jar包下载地址，点击直接下载。</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.47.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.47.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.48.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.48.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.49.zip">https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.49.zip</a></p>
+<ul>
+<li><p>使用以上方式下载的话，直接在idea手动导入jar包就可以了</p>
+</li>
+<li><p>Maven下载方式</p>
+</li>
+</ul>
+<p>在中央仓库服务maven依赖包的配置</p>
+<p>中央仓库的地址：<a target="_blank" rel="noopener" href="https://mvnrepository.com/artifact/mysql/mysql-connector-java">https://mvnrepository.com/artifact/mysql/mysql-connector-java</a></p>
+<p><img src="/../image/jdbc/jdbc1.png"></p>
+</li>
+</ul>
+<h2 id="2-注册驱动"><a href="#2-注册驱动" class="headerlink" title="2. 注册驱动"></a>2. 注册驱动</h2><pre><code class="java">Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;); 
 </code></pre>
-<p>​		紧接着，我写了一个java文件来测试我的java环境是否配置好了。一次测试成功！</p>
-<p><img src="/../image/ecs/p3.png"></p>
-<p>然后我就在服务器开始安装我的mysql8。</p>
-<p>因为之前安装jdk1.8的时候已经启用了yum的存储库，所以在这直接用yum进行安装。</p>
-<pre><code class="shell">yum --enablerepo=mysql80-community install mysql-community-server   //执行这个命令进行安装
+<h2 id="3-获取连接"><a href="#3-获取连接" class="headerlink" title="3.获取连接"></a>3.获取连接</h2><pre><code class="java"> Connection conn=DriverManager.getConnection(&quot;url&quot;, &quot;username&quot;, &quot;password&quot;);
+ String url=&quot;jdbc:mysql://localhost:3306/test&quot;;   //数据库连接地址和数据库的名称
+ String username = &quot;root&quot;;                        //数据库登录的用户名
+ String password = &quot;******&quot;;                      //数据库用户的密码
 </code></pre>
-<p>​			</p>
-<aside>
-💡 如果安装提示 **The GPG keys listed for the “MySQL 8.0 Community Server“ repository are already installed but……**
-</aside>
-
-<p>请执行以下命令后，重新进行安装：</p>
-<pre><code class="shell">rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+<h2 id="4-定义sql语句"><a href="#4-定义sql语句" class="headerlink" title="4.定义sql语句"></a>4.定义sql语句</h2><pre><code class="java"> String sql=&quot;update user set user_name=&#39;che&#39; where id=2&quot;; //修改user表中的id=2的user_name=&quot;che&quot;
 </code></pre>
-<p>安装好之后就可以启动我的mysql8的数据库，再通过阿里云服务器开发3306端口，在通过Navicat15的连接，很快就连接到了我的ECS上的mysql8。</p>
-<p><img src="/../image/ecs/p5.png"></p>
-<p><img src="/../image/ecs/p4.png"></p>
-<p>现在环境就基本配置好了，下一步准备学习把网站部署到服务器上。</p>
-<h3 id="3-总结展望"><a href="#3-总结展望" class="headerlink" title="3.总结展望"></a>3.总结展望</h3><p>​	总的来说，阿里云的ECS给我的印象还是十分好的，操作简单，自由度很高非常容易上手，也感谢阿里云给我的这次体验机会，我也希望能继续续领阿里的ECS服务器进行更多的操作和学习。感谢阿里云给我们这么好的平台！</p>
+<h2 id="5-获取执行sql的对象Statement"><a href="#5-获取执行sql的对象Statement" class="headerlink" title="5.获取执行sql的对象Statement"></a>5.获取执行sql的对象Statement</h2><pre><code class="java">Statement stmt=conn.createStatement(); 
+</code></pre>
+<h2 id="6-执行sql"><a href="#6-执行sql" class="headerlink" title="6.执行sql"></a>6.执行sql</h2><pre><code class="java">int count=stmt.executeUpdate(sql); //返回值是一个整数（int），指示受影响的行数（即更新计数）
+</code></pre>
+<h2 id="7-打印结果"><a href="#7-打印结果" class="headerlink" title="7.打印结果"></a>7.打印结果</h2><pre><code class="java">System.out.println(count);
+</code></pre>
+<h2 id="8-释放资源"><a href="#8-释放资源" class="headerlink" title="8.释放资源"></a>8.释放资源</h2><pre><code class="java">stmt.close();
+conn.close();
+</code></pre>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls"
@@ -247,7 +293,7 @@ yum install java-1.8.0-openjdk* -y   //开始安装
             <div class="box sticky animated fadeInRight faster">
                 <div id="toc" class="subbox">
                     <h4>目录</h4>
-                    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E9%A6%96%E6%AC%A1%E6%8E%A5%E8%A7%A6%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">1.首次接触服务器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%88%91%E7%9A%84%E9%98%BF%E9%87%8C%E4%BA%91%E4%BD%BF%E7%94%A8%E4%BD%93%E9%AA%8C"><span class="toc-number">2.</span> <span class="toc-text">2.我的阿里云使用体验</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%80%BB%E7%BB%93%E5%B1%95%E6%9C%9B"><span class="toc-number">3.</span> <span class="toc-text">3.总结展望</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80-JDBC%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">一. JDBC是什么</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C-JDBC%E7%9A%84%E9%A9%B1%E5%8A%A8%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">二.JDBC的驱动类型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89-%E4%BD%BF%E7%94%A8%E6%AD%A5%E9%AA%A4"><span class="toc-number">3.</span> <span class="toc-text">三. 使用步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%BD%BD%E5%85%A5JDBC%E9%A9%B1%E5%8A%A8"><span class="toc-number">3.1.</span> <span class="toc-text">1. 载入JDBC驱动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%B3%A8%E5%86%8C%E9%A9%B1%E5%8A%A8"><span class="toc-number">3.2.</span> <span class="toc-text">2. 注册驱动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5"><span class="toc-number">3.3.</span> <span class="toc-text">3.获取连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%AE%9A%E4%B9%89sql%E8%AF%AD%E5%8F%A5"><span class="toc-number">3.4.</span> <span class="toc-text">4.定义sql语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%8E%B7%E5%8F%96%E6%89%A7%E8%A1%8Csql%E7%9A%84%E5%AF%B9%E8%B1%A1Statement"><span class="toc-number">3.5.</span> <span class="toc-text">5.获取执行sql的对象Statement</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%89%A7%E8%A1%8Csql"><span class="toc-number">3.6.</span> <span class="toc-text">6.执行sql</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E6%89%93%E5%8D%B0%E7%BB%93%E6%9E%9C"><span class="toc-number">3.7.</span> <span class="toc-text">7.打印结果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E9%87%8A%E6%94%BE%E8%B5%84%E6%BA%90"><span class="toc-number">3.8.</span> <span class="toc-text">8.释放资源</span></a></li></ol></li></ol>
                 </div>
             </div>
             
