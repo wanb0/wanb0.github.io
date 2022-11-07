@@ -126,13 +126,13 @@
                 
                 <span>
                     <b class="iconfont icon-text2"></b> <i>文章字数</i>
-                    14k
+                    19k
                 </span>
                 
                 
                 <span>
                     <b class="iconfont icon-timer__s"></b> <i>阅读约需</i>
-                    13 mins.
+                    18 mins.
                 </span>
                 
                 
@@ -539,6 +539,127 @@ firewall-cmd --list-all     //查看是否生效
 <p><img src="/../image/web1/end.png"></p>
 </li>
 </ul>
+<h2 id="四-模拟数据发送"><a href="#四-模拟数据发送" class="headerlink" title="四. 模拟数据发送"></a>四. 模拟数据发送</h2><h3 id="1-UDP通信"><a href="#1-UDP通信" class="headerlink" title="1. UDP通信"></a>1. UDP通信</h3><h4 id="1-1-UDP简介"><a href="#1-1-UDP简介" class="headerlink" title="1.1 UDP简介"></a>1.1 UDP简介</h4><pre><code>UDP（UserDatagramProtocol）是一个简单的面向消息的传输层协议，尽管UDP提供标头和有效负载的完整性验证（通过校验和），但它不保证向上层协议提供消息传递，并且UDP层在发送后不会保留UDP 消息的状态。因此，UDP有时被称为不可靠的数据报协议。如果需要传输可靠性，则必须在用户应用程序中实现。
+</code></pre>
+<ul>
+<li><p>UDP是基于IP的简单协议，不可靠的协议。</p>
+</li>
+<li><p>UDP的优点：简单，轻量化。</p>
+</li>
+<li><p>UDP的缺点：没有流控制，没有应答确认机制，不能解决丢包、重发、错序问题。</p>
+</li>
+</ul>
+<h4 id="1-2-DatagramSocket-类"><a href="#1-2-DatagramSocket-类" class="headerlink" title="1.2 DatagramSocket 类"></a>1.2 DatagramSocket 类</h4><pre><code>DatagramSocket 类用于表示发送和接收数据报包的套接字。数据报包套接字是包投递服务的发送或接收点。每个在数据报包套接字上发送或接收的包都是单独编址和路由的。从一台机器发送到另一台机器的多个包可能选择不同的路由，也可能按不同的顺序到达。
+</code></pre>
+<ul>
+<li>构造方法</li>
+</ul>
+<p>（1）DatagramSocket()<br>绑定到本地地址和一个随机的端口号</p>
+<p>（2）DatagramSocket(int port)<br>绑定本地地址和一个特定的端口号</p>
+<p>（3）DatagramSocket(int port, InetAddress iad)<br>绑定到特定的端口号及指定地址</p>
+<p>（4）DatagramSocket(SocketAddress sad)<br>绑定指定地址和随机端口号</p>
+<ul>
+<li>基本方法</li>
+</ul>
+<p>（1）close()<br>关闭套接字</p>
+<p>（2）recevie(DatagramPacket dp)<br>接受数据报</p>
+<p>（3）send(DatagramPacket dp)<br>发送数据报</p>
+<h4 id="1-3-DatagramPacket-类"><a href="#1-3-DatagramPacket-类" class="headerlink" title="1.3 DatagramPacket 类"></a>1.3 DatagramPacket 类</h4><pre><code>java.net 包中的 DatagramPacket 类用来表示数据报包，数据报包用来实现无连接包投递服务。每条报文仅根据该包中包含的信息从一台机器路由到另一台机器。从一台机器发送到另一台机器的多个包可能选择不同的路由，也可能按不同的顺序到达。
+</code></pre>
+<ul>
+<li>接受类型</li>
+</ul>
+<p>（1）DatagramPacket(byte[] buf, int length)<br>用来接受长度为length的buf数据(即数据存于字节数组buf中)</p>
+<ul>
+<li>发送类型</li>
+</ul>
+<p>（1）DatagramPacket(byte[] buf, int length, InetAddress address, int port)<br>将length长的buf数据发送到指定的地址的端口号处</p>
+<p>（2）DatagramPacket(byte[] buf, int length, SocketAddress address)<br>将length长的buf数据发送到指定的套接字地址处</p>
+<h3 id="2-发送程序"><a href="#2-发送程序" class="headerlink" title="2. 发送程序"></a>2. 发送程序</h3><ul>
+<li><p>定义服务器的地址、端口号</p>
+<pre><code class="java">InetAddress address = InetAddress.getByName(&quot;121.5.149.32&quot;);
+int port = 1902;
+</code></pre>
+</li>
+<li><p>创建一个DatagramSocket对象，端口号可以默认</p>
+<pre><code class="java">DatagramSocket socket = new DatagramSocket();
+</code></pre>
+</li>
+<li><p>定义时间的格式</p>
+<pre><code class="java">SimpleDateFormat format=new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;);
+</code></pre>
+</li>
+<li><p>创建一个定时任务，用于向项目定时发数据,在task的run方法中去写我们的定时任务</p>
+<pre><code class="java">TimerTask task = new TimerTask();
+public void run() &#123;
+&#125;
+Timer timer = new Timer();
+timer.schedule(task, 0, 1000*60*5); // 立即执行一次task，然后每隔2秒执行一次task
+</code></pre>
+</li>
+<li><p>以下是发送信息的主题主要用上面的Socket的对象，发送一个Packet类型的数据，Packet里面包含服务器地址，端口号和发送的数据</p>
+<pre><code class="java"> int numArr[] = &#123;301,303,304&#125;;
+                String arr[]=new String[3];
+                arr[0]=&quot;01 38 46 32 37 32 37 29 46 2A 11 2B EE 29 EF 2B 14 EF&quot;;   //301设备数据发送(8路)
+                arr[1]=&quot;03 38 46 32 37 32 37 29 46 2A 11 2B EE 29 EF 2B 14 3A 0A 3A E3 48 50 48 4F 57 4A 						 39 CA 48 54 39 4F EF&quot;;//303设备数据发送(16路)
+                arr[2]=&quot;04 38 46 32 37 32 37 29 46 2A 11 2B EE 29 EF 2B 14 3A 0A 3A E3 48 50 48 4F 57 4A 					     39 CA 48 54 39 4F EF&quot;;//304设备数据发送(16路）
+                for (int i = 0; i &lt; arr.length; i++) &#123;
+                    String data = arr[i];
+                    byte bdata[]=hexStringToByteArray(data);
+                    DatagramPacket packet = new DatagramPacket(bdata,bdata.length, address, port);
+                    try &#123;
+                        socket.send(packet);
+                    &#125; catch (IOException e) &#123;
+                        e.printStackTrace();
+                    &#125;
+                    System.out.println(numArr[i]+&quot;通道发送成功&quot;+&quot;==&gt;发送时间：&quot;+format.format(new Date()));
+                &#125;
+</code></pre>
+</li>
+<li><p>发送程序的数据格式</p>
+<pre><code>数据的内容主要格式如下：
+&quot;01 38 46 32 37 32 37 29 46 2A 11 2B EE 29 EF 2B 14 EF&quot;
+主体为16进制字节数组
+长度为18位(8路)或34位（16路）
+第一位代表了设备号（数据库根据设备号查询对应的项目，以及每一路通道代表的数据类型）。
+中间的第2位到弟17位，（或者第2位到第33位）这些数值每两位为一组，一组代表一个通道的数据。
+最后一位即第18位（34位），为数据结束标志位，规定为”EF”或”ef”。若不是这个则表明数据不正确。
+</code></pre>
+</li>
+<li><p>将字符串转换为字节数组的函数</p>
+<pre><code class="java">   public static byte[] hexStringToByteArray(String hexString) &#123;
+        hexString = hexString.replaceAll(&quot; &quot;, &quot;&quot;);
+        int len = hexString.length();
+        byte[] bytes = new byte[len / 2];
+        for (int i = 0; i &lt; len; i += 2) &#123;
+            // 两位一组，表示一个字节,把这样表示的16进制字符串，还原成一个字节
+            bytes[i / 2] = (byte) ((Character.digit(hexString.charAt(i), 16) &lt;&lt; 4) + Character
+                    .digit(hexString.charAt(i + 1), 16));
+        &#125;
+        return bytes;
+    &#125;
+</code></pre>
+</li>
+</ul>
+<h3 id="3-运行程序"><a href="#3-运行程序" class="headerlink" title="3.运行程序"></a>3.运行程序</h3><ul>
+<li>把写好的java文件<strong>去掉头文件包名</strong>之后通过文件传输到服务器的硬盘中,并且终端到该目录下</li>
+</ul>
+<pre><code class="bash">javac TimeSend.java  # 编译java文件生成可执行文件
+nohup java TimeSend &gt; test.log 2&gt;&amp;1 &amp;  #  后台运行java文件并产生日志
+ps -ef   		 # 查看进程
+kill 进程号 	   #杀掉进程
+</code></pre>
+<ul>
+<li>在该目录运行日志里查看运行是否成功</li>
+</ul>
+<p><img src="/../image/web1/fasong1.png"></p>
+<ul>
+<li><p>在web端的历史数据里查看是否有新生成的数据</p>
+<p><img src="/../image/web1/fasong2.png"></p>
+</li>
+<li><p>数据模拟发送成功</p>
+</li>
+</ul>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls"
@@ -602,7 +723,7 @@ firewall-cmd --list-all     //查看是否生效
             <div class="box sticky animated fadeInRight faster">
                 <div id="toc" class="subbox">
                     <h4>目录</h4>
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">一.开发环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-JDK%E5%AE%89%E8%A3%85"><span class="toc-number">1.1.</span> <span class="toc-text">1.JDK安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-IDEA%E5%AE%89%E8%A3%85"><span class="toc-number">1.2.</span> <span class="toc-text">2. IDEA安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-MySQL-amp-Navicat"><span class="toc-number">1.3.</span> <span class="toc-text">3. MySQL&amp;Navicat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Tomcat%E5%AE%89%E8%A3%85"><span class="toc-number">1.4.</span> <span class="toc-text">4.Tomcat安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-redis%E5%AE%89%E8%A3%85"><span class="toc-number">1.5.</span> <span class="toc-text">5. redis安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-VsCode"><span class="toc-number">1.6.</span> <span class="toc-text">6. VsCode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-nodejs%E5%AE%89%E8%A3%85"><span class="toc-number">1.7.</span> <span class="toc-text">7. nodejs安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-Termius%E5%AE%89%E8%A3%85%EF%BC%88%E5%8F%AF%E4%BB%A5%E4%B8%8D%E8%A3%85%EF%BC%89"><span class="toc-number">1.8.</span> <span class="toc-text">8. Termius安装（可以不装）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">2.</span> <span class="toc-text">二. 服务器环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%85%88%E5%88%B0%E9%98%BF%E9%87%8C%E4%BA%91%E5%AD%A6%E7%94%9F%E7%9A%84%E6%B4%BB%E5%8A%A8%E9%A1%B5%E9%9D%A2%E7%99%BB%E5%BD%95%E9%A2%86%E5%8F%9614%E5%A4%A9"><span class="toc-number">2.1.</span> <span class="toc-text">1. 先到阿里云学生的活动页面登录领取14天</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%8A%95%E7%A8%BF%E5%B9%B6%E7%BB%AD%E9%A2%86%E4%B8%A4%E4%B8%AA%E6%9C%88%E7%9A%84ECS"><span class="toc-number">2.2.</span> <span class="toc-text">2. 投稿并续领两个月的ECS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%80%9A%E8%BF%87%E5%91%BD%E4%BB%A4%E5%AE%89%E8%A3%85%E5%AE%9D%E5%A1%94%E9%9D%A2%E6%9D%BF"><span class="toc-number">2.3.</span> <span class="toc-text">3. 通过命令安装宝塔面板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%80%9A%E8%BF%87%E5%AE%9D%E5%A1%94%E9%9D%A2%E6%9D%BF%E5%92%8C%E5%91%BD%E4%BB%A4%E5%AE%89%E8%A3%85%E5%BA%94%E7%94%A8"><span class="toc-number">2.4.</span> <span class="toc-text">4.通过宝塔面板和命令安装应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%85%8D%E7%BD%AE%E5%B9%B6%E7%94%A8Navicat%E8%BF%9E%E6%8E%A5ECS%E7%9A%84mysql"><span class="toc-number">2.5.</span> <span class="toc-text">3.配置并用Navicat连接ECS的mysql</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%80%9A%E8%BF%87Navicat-%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE%E5%BA%93%E6%96%87%E4%BB%B6"><span class="toc-number">2.6.</span> <span class="toc-text">4. 通过Navicat 导入数据库文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E9%83%A8%E7%BD%B2%E7%B3%BB%E7%BB%9F"><span class="toc-number">3.</span> <span class="toc-text">三.部署系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Web%E9%A1%B9%E7%9B%AE%E5%9C%A8%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8C"><span class="toc-number">3.1.</span> <span class="toc-text">1. Web项目在本地运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Web%E9%A1%B9%E7%9B%AE%E5%9C%A8ECS%E7%9A%84%E9%83%A8%E7%BD%B2"><span class="toc-number">3.2.</span> <span class="toc-text">2. Web项目在ECS的部署</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">一.开发环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-JDK%E5%AE%89%E8%A3%85"><span class="toc-number">1.1.</span> <span class="toc-text">1.JDK安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-IDEA%E5%AE%89%E8%A3%85"><span class="toc-number">1.2.</span> <span class="toc-text">2. IDEA安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-MySQL-amp-Navicat"><span class="toc-number">1.3.</span> <span class="toc-text">3. MySQL&amp;Navicat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Tomcat%E5%AE%89%E8%A3%85"><span class="toc-number">1.4.</span> <span class="toc-text">4.Tomcat安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-redis%E5%AE%89%E8%A3%85"><span class="toc-number">1.5.</span> <span class="toc-text">5. redis安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-VsCode"><span class="toc-number">1.6.</span> <span class="toc-text">6. VsCode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-nodejs%E5%AE%89%E8%A3%85"><span class="toc-number">1.7.</span> <span class="toc-text">7. nodejs安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-Termius%E5%AE%89%E8%A3%85%EF%BC%88%E5%8F%AF%E4%BB%A5%E4%B8%8D%E8%A3%85%EF%BC%89"><span class="toc-number">1.8.</span> <span class="toc-text">8. Termius安装（可以不装）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="toc-number">2.</span> <span class="toc-text">二. 服务器环境搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%85%88%E5%88%B0%E9%98%BF%E9%87%8C%E4%BA%91%E5%AD%A6%E7%94%9F%E7%9A%84%E6%B4%BB%E5%8A%A8%E9%A1%B5%E9%9D%A2%E7%99%BB%E5%BD%95%E9%A2%86%E5%8F%9614%E5%A4%A9"><span class="toc-number">2.1.</span> <span class="toc-text">1. 先到阿里云学生的活动页面登录领取14天</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%8A%95%E7%A8%BF%E5%B9%B6%E7%BB%AD%E9%A2%86%E4%B8%A4%E4%B8%AA%E6%9C%88%E7%9A%84ECS"><span class="toc-number">2.2.</span> <span class="toc-text">2. 投稿并续领两个月的ECS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%80%9A%E8%BF%87%E5%91%BD%E4%BB%A4%E5%AE%89%E8%A3%85%E5%AE%9D%E5%A1%94%E9%9D%A2%E6%9D%BF"><span class="toc-number">2.3.</span> <span class="toc-text">3. 通过命令安装宝塔面板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%80%9A%E8%BF%87%E5%AE%9D%E5%A1%94%E9%9D%A2%E6%9D%BF%E5%92%8C%E5%91%BD%E4%BB%A4%E5%AE%89%E8%A3%85%E5%BA%94%E7%94%A8"><span class="toc-number">2.4.</span> <span class="toc-text">4.通过宝塔面板和命令安装应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%85%8D%E7%BD%AE%E5%B9%B6%E7%94%A8Navicat%E8%BF%9E%E6%8E%A5ECS%E7%9A%84mysql"><span class="toc-number">2.5.</span> <span class="toc-text">3.配置并用Navicat连接ECS的mysql</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%80%9A%E8%BF%87Navicat-%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE%E5%BA%93%E6%96%87%E4%BB%B6"><span class="toc-number">2.6.</span> <span class="toc-text">4. 通过Navicat 导入数据库文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-%E9%83%A8%E7%BD%B2%E7%B3%BB%E7%BB%9F"><span class="toc-number">3.</span> <span class="toc-text">三.部署系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Web%E9%A1%B9%E7%9B%AE%E5%9C%A8%E6%9C%AC%E5%9C%B0%E8%BF%90%E8%A1%8C"><span class="toc-number">3.1.</span> <span class="toc-text">1. Web项目在本地运行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Web%E9%A1%B9%E7%9B%AE%E5%9C%A8ECS%E7%9A%84%E9%83%A8%E7%BD%B2"><span class="toc-number">3.2.</span> <span class="toc-text">2. Web项目在ECS的部署</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-%E6%A8%A1%E6%8B%9F%E6%95%B0%E6%8D%AE%E5%8F%91%E9%80%81"><span class="toc-number">4.</span> <span class="toc-text">四. 模拟数据发送</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-UDP%E9%80%9A%E4%BF%A1"><span class="toc-number">4.1.</span> <span class="toc-text">1. UDP通信</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8F%91%E9%80%81%E7%A8%8B%E5%BA%8F"><span class="toc-number">4.2.</span> <span class="toc-text">2. 发送程序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%BF%90%E8%A1%8C%E7%A8%8B%E5%BA%8F"><span class="toc-number">4.3.</span> <span class="toc-text">3.运行程序</span></a></li></ol></li></ol>
                 </div>
             </div>
             
