@@ -116,13 +116,13 @@
                 
                 <span>
                     <b class="iconfont icon-text2"></b> <i>文章字数</i>
-                    31k
+                    39k
                 </span>
                 
                 
                 <span>
                     <b class="iconfont icon-timer__s"></b> <i>阅读约需</i>
-                    28 mins.
+                    36 mins.
                 </span>
                 
                 
@@ -974,7 +974,268 @@ conn.setAutoCommit(false);
 </code></pre>
 </li>
 </ul>
-<h1 id="八-DAO及其实现类"><a href="#八-DAO及其实现类" class="headerlink" title="八.  DAO及其实现类"></a>八.  DAO及其实现类</h1>
+<h1 id="八-DAO及其实现类"><a href="#八-DAO及其实现类" class="headerlink" title="八.  DAO及其实现类"></a>八.  DAO及其实现类</h1><h2 id="1-底层DAO类，通用操作"><a href="#1-底层DAO类，通用操作" class="headerlink" title="1.底层DAO类，通用操作"></a>1.底层DAO类，通用操作</h2><pre><code class="java">package com.DAO;
+
+import org.testng.annotations.Test;
+
+import java.lang.reflect.Field;
+import java.sql.*;
+
+import static com.alibaba.druid.util.JdbcUtils.close;
+
+/**
+ *针对数据表的通用的操作
+ */
+public abstract class BaseDAO &#123;
+
+    //通用的增删改操作
+    @Test
+    public int UpDate(Connection conn, String sql, Object... args) throws SQLException &#123;
+        PreparedStatement pstmt = null;
+        try &#123;
+            //预编译sql语句
+            pstmt = conn.prepareStatement(sql);
+            //填充占位符
+            for (int i = 0; i &lt; args.length; i++) &#123;
+                pstmt.setObject(i + 1, args[i]);
+            &#125;
+            //执行sql语句
+            return pstmt.executeUpdate();
+        &#125; catch (Exception e) &#123;
+            e.printStackTrace();
+        &#125; finally &#123;
+            close(pstmt);
+        &#125;
+        return 0;
+    &#125;
+    //通用的查询操作，返回表中的一条记录
+    @Test
+    public &lt;T&gt; T getInstance(Connection conn, Class&lt;T&gt; clazz, String sql, Object... args) throws SQLException &#123;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try &#123;
+            //预编译sql语句
+            pstmt = conn.prepareStatement(sql);
+            //填充占位符
+            for (int i = 0; i &lt; args.length; i++) &#123;
+                pstmt.setObject(i + 1, args[i]);
+            &#125;
+            //执行sql语句
+            rs = pstmt.executeQuery();
+            //获取结果集的元数据
+            ResultSetMetaData rsmd = rs.getMetaData();
+            //获取列数
+            int columnCount = rsmd.getColumnCount();
+            if (rs.next()) &#123;
+                T t = clazz.newInstance();
+                //处理结果集一行数据中的每一列
+                for (int i = 0; i &lt; columnCount; i++) &#123;
+                    //获取列值
+                    Object columnValue = rs.getObject(i + 1);
+                    //获取每个列的列名
+                    String columnLabel = rsmd.getColumnLabel(i + 1);
+                    //给t对象指定的columnName属性，赋值为columnValue，通过反射
+                    Field field = clazz.getDeclaredField(columnLabel);
+                    field.setAccessible(true);
+                    field.set(t, columnValue);
+                &#125;
+                return t;
+            &#125;
+        &#125; catch (Exception e) &#123;
+            e.printStackTrace();
+        &#125; finally &#123;
+            close(rs);
+            close(pstmt);
+        &#125;
+        return null;
+    &#125;
+    //通用的查询操作，返回表中的多条记录构成的集合
+    @Test
+    public &lt;T&gt; T getForList(Connection conn, Class&lt;T&gt; clazz, String sql, Object... args) throws SQLException &#123;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try &#123;
+            //预编译sql语句
+            pstmt = conn.prepareStatement(sql);
+            //填充占位符
+            for (int i = 0; i &lt; args.length; i++) &#123;
+                pstmt.setObject(i + 1, args[i]);
+            &#125;
+            //执行sql语句
+            rs = pstmt.executeQuery();
+            //获取结果集的元数据
+            ResultSetMetaData rsmd = rs.getMetaData();
+            //获取列数
+            int columnCount = rsmd.getColumnCount();
+            if (rs.next()) &#123;
+                T t = clazz.newInstance();
+                //处理结果集一行数据中的每一列
+                for (int i = 0; i &lt; columnCount; i++) &#123;
+                    //获取列值
+                    Object columnValue = rs.getObject(i + 1);
+                    //获取每个列的列名
+                    String columnLabel = rsmd.getColumnLabel(i + 1);
+                    //给t对象指定的columnName属性，赋值为columnValue，通过反射
+                    Field field = clazz.getDeclaredField(columnLabel);
+                    field.setAccessible(true);
+                    field.set(t, columnValue);
+                &#125;
+                return t;
+            &#125;
+        &#125; catch (Exception e) &#123;
+            e.printStackTrace();
+        &#125; finally &#123;
+            close(rs);
+            close(pstmt);
+        &#125;
+        return null;
+    &#125;
+    //用于查询特殊值的通用的方法
+    @Test
+    public &lt;E&gt; E getValue(Connection conn, String sql, Object... args) &#123;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try &#123;
+            //预编译sql语句
+            pstmt = conn.prepareStatement(sql);
+            //填充占位符
+            for (int i = 0; i &lt; args.length; i++) &#123;
+                pstmt.setObject(i + 1, args[i]);
+            &#125;
+            //执行sql语句
+            rs = pstmt.executeQuery();
+            if (rs.next()) &#123;
+                return (E) rs.getObject(1);
+            &#125;
+        &#125; catch (Exception e) &#123;
+            e.printStackTrace();
+        &#125; finally &#123;
+            close(rs);
+            close(pstmt);
+        &#125;
+        return null;
+    &#125;
+
+&#125;
+</code></pre>
+<h2 id="2-对操作的表写一个接口"><a href="#2-对操作的表写一个接口" class="headerlink" title="2. 对操作的表写一个接口"></a>2. 对操作的表写一个接口</h2><pre><code class="java">package com.DAO;
+import com.bean.Customer;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+
+/**
+ * 用来定义规范针对于Customer表的常用操作
+ */
+public interface CustomerDAO &#123;
+    /**
+     * 将cust对象添加到数据库中
+     * @param conn
+     * @param cust
+     */
+    void insert(Connection conn, Customer cust) throws SQLException;
+
+    /**
+     * 针对指定的id，删除表中的一条记录
+     * @param conn
+     * @param id
+     */
+    void deleteById(Connection conn, int id) throws SQLException;
+
+    /**
+     * 针对内存中的cust对象，去修改数据表中指定的记录
+     * @param conn
+     * @param cust
+     */
+    void update(Connection conn,Customer cust) throws SQLException;
+
+    /**
+     * 针对指定的id查询得到对应的Customer对象
+     * @param conn
+     * @param id
+     */
+    Customer getCustomerById(Connection conn, int id) throws SQLException;
+
+    /**
+     * 查询表中的所有记录构成的集合
+     * @param conn
+     * @return
+     */
+    List&lt;Customer&gt; getAll(Connection conn) throws SQLException;
+
+    /**
+     * 返回数据表中的数据的条目数
+     * @param conn
+     * @return
+     */
+    Long getCount(Connection conn);
+
+    /**
+     * 返回数据表中最大的生日
+     * @param conn
+     * @return
+     */
+    Date getMaxBirth(Connection conn);
+&#125;
+</code></pre>
+<h2 id="3-实现类"><a href="#3-实现类" class="headerlink" title="3.实现类"></a>3.实现类</h2><pre><code class="java">package com.DAO;
+import com.bean.Customer;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+public class CustomerDAOImpl extends BaseDAO implements CustomerDAO&#123;
+    @Override
+    public void insert(Connection conn, Customer cust) throws SQLException &#123;
+    String sql = &quot;insert into customers(name,email,birth)values(?,?,?)&quot;;
+    UpDate(conn,sql,cust.getName(),cust.getEmail(),cust.getBirth());
+    &#125;
+
+    @Override
+    public void deleteById(Connection conn, int id) throws SQLException &#123;
+        String sql = &quot;delete from customers where id = ?&quot;;
+        UpDate(conn,&quot;delete from customers where id = ?&quot;,id);
+    &#125;
+
+    @Override
+    public void update(Connection conn, Customer cust) throws SQLException &#123;
+        String sql = &quot;update customers set name = ?,email = ?,birth = ? where id = ?&quot;;
+        UpDate(conn,sql,cust.getName(),cust.getEmail(),cust.getBirth(),cust.getId());
+    &#125;
+
+    @Override
+    public Customer getCustomerById(Connection conn, int id) throws SQLException &#123;
+        String sql = &quot;select id,name,email,birth from customers where id = ?&quot;;
+        Customer customer = getInstance(conn, Customer.class, sql, id);
+        return customer;
+    &#125;
+
+    @Override
+    public List&lt;Customer&gt; getAll(Connection conn) throws SQLException &#123;
+        String sql = &quot;select id,name,email,birth from customers&quot;;
+        List&lt;Customer&gt; list = Collections.singletonList(getForList(conn, Customer.class, sql));
+        return list;
+    &#125;
+
+    @Override
+    public Long getCount(Connection conn) &#123;
+        String sql = &quot;select count(*) from customers&quot;;
+        Long count = getValue(conn, sql);
+        return count;
+    &#125;
+
+    @Override
+    public Date getMaxBirth(Connection conn) &#123;
+        String sql = &quot;select max(birth) from customers&quot;;
+        Date maxBirth = getValue(conn, sql);
+        return maxBirth;
+    &#125;
+&#125;
+</code></pre>
+
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls"
                 data-autoplay="false">
@@ -1026,9 +1287,9 @@ conn.setAutoCommit(false);
                     </dl>
                 </div>
                 <ul>
-                    <li><a href="/">5 <p>文章</p></a></li>
-                    <li><a href="/categories">6 <p>分类</p></a></li>
-                    <li><a href="/tags">3 <p>标签</p></a></li>
+                    <li><a href="/">6 <p>文章</p></a></li>
+                    <li><a href="/categories">7 <p>分类</p></a></li>
+                    <li><a href="/tags">4 <p>标签</p></a></li>
                 </ul>
             </div>
             
@@ -1037,7 +1298,7 @@ conn.setAutoCommit(false);
             <div class="box sticky animated fadeInRight faster">
                 <div id="toc" class="subbox">
                     <h4>目录</h4>
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80-JDBC%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">一. JDBC是什么</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C-JDBC%E7%9A%84%E9%A9%B1%E5%8A%A8%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">二.JDBC的驱动类型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89-%E4%BD%BF%E7%94%A8%E6%AD%A5%E9%AA%A4"><span class="toc-number">3.</span> <span class="toc-text">三. 使用步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%BD%BD%E5%85%A5JDBC%E9%A9%B1%E5%8A%A8"><span class="toc-number">3.1.</span> <span class="toc-text">1. 载入JDBC驱动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%B3%A8%E5%86%8C%E9%A9%B1%E5%8A%A8"><span class="toc-number">3.2.</span> <span class="toc-text">2. 注册驱动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5"><span class="toc-number">3.3.</span> <span class="toc-text">3.获取连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%AE%9A%E4%B9%89sql%E8%AF%AD%E5%8F%A5"><span class="toc-number">3.4.</span> <span class="toc-text">4.定义sql语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%8E%B7%E5%8F%96%E6%89%A7%E8%A1%8Csql%E7%9A%84%E5%AF%B9%E8%B1%A1Statement"><span class="toc-number">3.5.</span> <span class="toc-text">5.获取执行sql的对象Statement</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%89%A7%E8%A1%8Csql"><span class="toc-number">3.6.</span> <span class="toc-text">6.执行sql</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E6%89%93%E5%8D%B0%E7%BB%93%E6%9E%9C"><span class="toc-number">3.7.</span> <span class="toc-text">7.打印结果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E9%87%8A%E6%94%BE%E8%B5%84%E6%BA%90"><span class="toc-number">3.8.</span> <span class="toc-text">8.释放资源</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B-JDBCAPI"><span class="toc-number">4.</span> <span class="toc-text">四.JDBCAPI</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-DriverManager"><span class="toc-number">4.1.</span> <span class="toc-text">1.DriverManager</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Connection"><span class="toc-number">4.2.</span> <span class="toc-text">2. Connection</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Statement"><span class="toc-number">4.3.</span> <span class="toc-text">3.Statement</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-ResultSet"><span class="toc-number">4.4.</span> <span class="toc-text">4.ResultSet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-PreparedStatement"><span class="toc-number">4.5.</span> <span class="toc-text">5.PreparedStatement</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="toc-number">5.</span> <span class="toc-text">五.数据库连接池</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%AE%80%E4%BB%8B"><span class="toc-number">5.1.</span> <span class="toc-text">1.简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Driud-%E5%BE%B7%E9%B2%81%E4%BC%8A-%E6%95%B0%E6%8D%AE%E8%BF%9E%E6%8E%A5%E6%B1%A0%E4%BD%BF%E7%94%A8%E6%AD%A5%E9%AA%A4"><span class="toc-number">5.2.</span> <span class="toc-text">2.Driud(德鲁伊)数据连接池使用步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AF%BC%E5%85%A5jar%E5%8C%85"><span class="toc-number">5.2.1.</span> <span class="toc-text">1.导入jar包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%AE%9A%E4%B9%89%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">5.2.2.</span> <span class="toc-text">2. 定义配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%8A%A0%E8%BD%BD%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">5.2.3.</span> <span class="toc-text">3. 加载配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE%E5%BA%93%E6%B1%A0%E8%BF%9E%E6%8E%A5%E5%AF%B9%E8%B1%A1"><span class="toc-number">5.2.4.</span> <span class="toc-text">4. 获取数据库池连接对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5"><span class="toc-number">5.2.5.</span> <span class="toc-text">5. 获取连接</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AD-JDBC%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E7%BB%83%E4%B9%A0"><span class="toc-number">6.</span> <span class="toc-text">六. JDBC基本操作练习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BB%A3%E7%A0%81"><span class="toc-number">6.1.</span> <span class="toc-text">1. 数据库代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%AE%9E%E4%BD%93%E7%B1%BB%E4%BB%A3%E7%A0%81"><span class="toc-number">6.2.</span> <span class="toc-text">2. 实体类代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%9F%A5%E8%AF%A2%E6%B5%8B%E8%AF%95%E7%B1%BB%E4%BB%A3%E7%A0%81"><span class="toc-number">6.3.</span> <span class="toc-text">3. 查询测试类代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%A2%9E%E5%8A%A0%E6%B5%8B%E8%AF%95%E7%B1%BB"><span class="toc-number">6.4.</span> <span class="toc-text">4. 增加测试类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E4%BF%AE%E6%94%B9%E6%B5%8B%E8%AF%95%E7%B1%BB%EF%BC%88by-id%EF%BC%89"><span class="toc-number">6.5.</span> <span class="toc-text">5. 修改测试类（by id）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%88%A0%E9%99%A4%E6%B5%8B%E8%AF%95%E7%B1%BB%E4%BB%A3%E7%A0%81%EF%BC%88by-id%EF%BC%89"><span class="toc-number">6.6.</span> <span class="toc-text">6. 删除测试类代码（by id）</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%83-%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1"><span class="toc-number">7.</span> <span class="toc-text">七. 数据库事务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BA%8B%E5%8A%A1"><span class="toc-number">7.1.</span> <span class="toc-text">1. 事务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%8B%E5%8A%A1"><span class="toc-number">7.1.1.</span> <span class="toc-text">1. 什么是事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BA%8B%E5%8A%A1%E7%9A%84ACID%E5%B1%9E%E6%80%A7"><span class="toc-number">7.1.2.</span> <span class="toc-text">2. 事务的ACID属性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E5%9F%BA%E6%9C%AC%E6%96%B9%E6%B3%95"><span class="toc-number">7.2.</span> <span class="toc-text">2.事务管理基本方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%BD%AC%E8%B4%A6%E6%A1%88%E4%BE%8B%E6%BC%94%E7%A4%BA"><span class="toc-number">7.3.</span> <span class="toc-text">3. 转账案例演示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%B5%8B%E8%AF%95%E7%B1%BB"><span class="toc-number">7.3.1.</span> <span class="toc-text">1. 测试类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BA%8B%E5%8A%A1%E7%B1%BB"><span class="toc-number">7.3.2.</span> <span class="toc-text">2. 事务类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="toc-number">7.4.</span> <span class="toc-text">4. 数据库的隔离级别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-MySQL%E5%9B%9B%E7%A7%8D%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E5%AE%9A%E4%B9%89"><span class="toc-number">7.4.1.</span> <span class="toc-text">1. MySQL四种隔离级别定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E4%BA%A7%E7%94%9F%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">7.4.2.</span> <span class="toc-text">2. 隔离级别产生的问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9F%A5%E7%9C%8B%E4%BF%AE%E6%94%B9%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="toc-number">7.4.3.</span> <span class="toc-text">3.查看修改隔离级别</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AB-DAO%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0%E7%B1%BB"><span class="toc-number">8.</span> <span class="toc-text">八.  DAO及其实现类</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80-JDBC%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.</span> <span class="toc-text">一. JDBC是什么</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C-JDBC%E7%9A%84%E9%A9%B1%E5%8A%A8%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">二.JDBC的驱动类型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89-%E4%BD%BF%E7%94%A8%E6%AD%A5%E9%AA%A4"><span class="toc-number">3.</span> <span class="toc-text">三. 使用步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%BD%BD%E5%85%A5JDBC%E9%A9%B1%E5%8A%A8"><span class="toc-number">3.1.</span> <span class="toc-text">1. 载入JDBC驱动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%B3%A8%E5%86%8C%E9%A9%B1%E5%8A%A8"><span class="toc-number">3.2.</span> <span class="toc-text">2. 注册驱动</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5"><span class="toc-number">3.3.</span> <span class="toc-text">3.获取连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%AE%9A%E4%B9%89sql%E8%AF%AD%E5%8F%A5"><span class="toc-number">3.4.</span> <span class="toc-text">4.定义sql语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%8E%B7%E5%8F%96%E6%89%A7%E8%A1%8Csql%E7%9A%84%E5%AF%B9%E8%B1%A1Statement"><span class="toc-number">3.5.</span> <span class="toc-text">5.获取执行sql的对象Statement</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%89%A7%E8%A1%8Csql"><span class="toc-number">3.6.</span> <span class="toc-text">6.执行sql</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E6%89%93%E5%8D%B0%E7%BB%93%E6%9E%9C"><span class="toc-number">3.7.</span> <span class="toc-text">7.打印结果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E9%87%8A%E6%94%BE%E8%B5%84%E6%BA%90"><span class="toc-number">3.8.</span> <span class="toc-text">8.释放资源</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B-JDBCAPI"><span class="toc-number">4.</span> <span class="toc-text">四.JDBCAPI</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-DriverManager"><span class="toc-number">4.1.</span> <span class="toc-text">1.DriverManager</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Connection"><span class="toc-number">4.2.</span> <span class="toc-text">2. Connection</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Statement"><span class="toc-number">4.3.</span> <span class="toc-text">3.Statement</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-ResultSet"><span class="toc-number">4.4.</span> <span class="toc-text">4.ResultSet</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-PreparedStatement"><span class="toc-number">4.5.</span> <span class="toc-text">5.PreparedStatement</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="toc-number">5.</span> <span class="toc-text">五.数据库连接池</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%AE%80%E4%BB%8B"><span class="toc-number">5.1.</span> <span class="toc-text">1.简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Driud-%E5%BE%B7%E9%B2%81%E4%BC%8A-%E6%95%B0%E6%8D%AE%E8%BF%9E%E6%8E%A5%E6%B1%A0%E4%BD%BF%E7%94%A8%E6%AD%A5%E9%AA%A4"><span class="toc-number">5.2.</span> <span class="toc-text">2.Driud(德鲁伊)数据连接池使用步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AF%BC%E5%85%A5jar%E5%8C%85"><span class="toc-number">5.2.1.</span> <span class="toc-text">1.导入jar包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%AE%9A%E4%B9%89%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">5.2.2.</span> <span class="toc-text">2. 定义配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%8A%A0%E8%BD%BD%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">5.2.3.</span> <span class="toc-text">3. 加载配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE%E5%BA%93%E6%B1%A0%E8%BF%9E%E6%8E%A5%E5%AF%B9%E8%B1%A1"><span class="toc-number">5.2.4.</span> <span class="toc-text">4. 获取数据库池连接对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5"><span class="toc-number">5.2.5.</span> <span class="toc-text">5. 获取连接</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AD-JDBC%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E7%BB%83%E4%B9%A0"><span class="toc-number">6.</span> <span class="toc-text">六. JDBC基本操作练习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BB%A3%E7%A0%81"><span class="toc-number">6.1.</span> <span class="toc-text">1. 数据库代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%AE%9E%E4%BD%93%E7%B1%BB%E4%BB%A3%E7%A0%81"><span class="toc-number">6.2.</span> <span class="toc-text">2. 实体类代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%9F%A5%E8%AF%A2%E6%B5%8B%E8%AF%95%E7%B1%BB%E4%BB%A3%E7%A0%81"><span class="toc-number">6.3.</span> <span class="toc-text">3. 查询测试类代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%A2%9E%E5%8A%A0%E6%B5%8B%E8%AF%95%E7%B1%BB"><span class="toc-number">6.4.</span> <span class="toc-text">4. 增加测试类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E4%BF%AE%E6%94%B9%E6%B5%8B%E8%AF%95%E7%B1%BB%EF%BC%88by-id%EF%BC%89"><span class="toc-number">6.5.</span> <span class="toc-text">5. 修改测试类（by id）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%88%A0%E9%99%A4%E6%B5%8B%E8%AF%95%E7%B1%BB%E4%BB%A3%E7%A0%81%EF%BC%88by-id%EF%BC%89"><span class="toc-number">6.6.</span> <span class="toc-text">6. 删除测试类代码（by id）</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%83-%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%8B%E5%8A%A1"><span class="toc-number">7.</span> <span class="toc-text">七. 数据库事务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BA%8B%E5%8A%A1"><span class="toc-number">7.1.</span> <span class="toc-text">1. 事务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%8B%E5%8A%A1"><span class="toc-number">7.1.1.</span> <span class="toc-text">1. 什么是事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BA%8B%E5%8A%A1%E7%9A%84ACID%E5%B1%9E%E6%80%A7"><span class="toc-number">7.1.2.</span> <span class="toc-text">2. 事务的ACID属性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E5%9F%BA%E6%9C%AC%E6%96%B9%E6%B3%95"><span class="toc-number">7.2.</span> <span class="toc-text">2.事务管理基本方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%BD%AC%E8%B4%A6%E6%A1%88%E4%BE%8B%E6%BC%94%E7%A4%BA"><span class="toc-number">7.3.</span> <span class="toc-text">3. 转账案例演示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%B5%8B%E8%AF%95%E7%B1%BB"><span class="toc-number">7.3.1.</span> <span class="toc-text">1. 测试类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BA%8B%E5%8A%A1%E7%B1%BB"><span class="toc-number">7.3.2.</span> <span class="toc-text">2. 事务类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="toc-number">7.4.</span> <span class="toc-text">4. 数据库的隔离级别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-MySQL%E5%9B%9B%E7%A7%8D%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E5%AE%9A%E4%B9%89"><span class="toc-number">7.4.1.</span> <span class="toc-text">1. MySQL四种隔离级别定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E4%BA%A7%E7%94%9F%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">7.4.2.</span> <span class="toc-text">2. 隔离级别产生的问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9F%A5%E7%9C%8B%E4%BF%AE%E6%94%B9%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="toc-number">7.4.3.</span> <span class="toc-text">3.查看修改隔离级别</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AB-DAO%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0%E7%B1%BB"><span class="toc-number">8.</span> <span class="toc-text">八.  DAO及其实现类</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%BA%95%E5%B1%82DAO%E7%B1%BB%EF%BC%8C%E9%80%9A%E7%94%A8%E6%93%8D%E4%BD%9C"><span class="toc-number">8.1.</span> <span class="toc-text">1.底层DAO类，通用操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%AF%B9%E6%93%8D%E4%BD%9C%E7%9A%84%E8%A1%A8%E5%86%99%E4%B8%80%E4%B8%AA%E6%8E%A5%E5%8F%A3"><span class="toc-number">8.2.</span> <span class="toc-text">2. 对操作的表写一个接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%AE%9E%E7%8E%B0%E7%B1%BB"><span class="toc-number">8.3.</span> <span class="toc-text">3.实现类</span></a></li></ol></li></ol>
                 </div>
             </div>
             
