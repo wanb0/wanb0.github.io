@@ -116,20 +116,20 @@
                 
                 十一月 10, 2022
             </p>
-            <h3 class="post-title animated fadeInDown"><a href="/2022/11/10/JavaWeb%E5%85%A5%E9%97%A8/" title="JavaWeb入门" class="">JavaWeb入门</a>
+            <h3 class="post-title animated fadeInDown"><a href="/2022/11/10/huishouzhan/JavaWeb%E5%85%A5%E9%97%A8/" title="JavaWeb入门" class="">JavaWeb入门</a>
             </h3>
             
             <p class="post-count animated fadeInDown">
                 
                 <span>
                     <b class="iconfont icon-text2"></b> <i>文章字数</i>
-                    3.1k
+                    14k
                 </span>
                 
                 
                 <span>
                     <b class="iconfont icon-timer__s"></b> <i>阅读约需</i>
-                    3 mins.
+                    13 mins.
                 </span>
                 
                 
@@ -222,23 +222,342 @@
 &lt;/html&gt;
 </code></pre>
 <h2 id="3-新建一个Servlet类，用来获取表单数据"><a href="#3-新建一个Servlet类，用来获取表单数据" class="headerlink" title="3. 新建一个Servlet类，用来获取表单数据"></a>3. 新建一个Servlet类，用来获取表单数据</h2><p><img src="/../image/javaweb/javaweb13.png"></p>
-<pre><code class="java">import javax.servlet.http.HttpServletResponse;
+<pre><code class="java">package com.Servlets;
+
+import com.dao.FruitDAOImpl;
+import com.fruitpojo.Fruit;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class AddServlets extends HttpServlet &#123;
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;
+        try &#123;
+            Class.forName(&quot;com.mysql.cj.jdbc.Driver&quot;);
+        &#125; catch (ClassNotFoundException e) &#123;
+            throw new RuntimeException(e);
+        &#125;
+        String url = &quot;jdbc:mysql://localhost:3306/db1?useSSL=false&amp;useServerPrepStmts=true&quot;;
+        String username = &quot;root&quot;;
+        String password = &quot;aA123456!&quot;;
+        Connection conn;
+        try &#123;
+            conn = DriverManager.getConnection(url, username, password);
+        &#125; catch (SQLException e) &#123;
+            throw new RuntimeException(e);
+        &#125;
         String fname = req.getParameter(&quot;fname&quot;);
         String priceStr = req.getParameter(&quot;price&quot;);
         Integer price = Integer.parseInt(priceStr);
         String fcount = req.getParameter(&quot;fcount&quot;);
-        Integer count = Integer.parseInt(fcount);
-        String remark = req.getParameter(&quot;remark&quot;);
-        System.out.println(fname + price + count + remark);
-    &#125;
+        Integer count = Integer.parseInt(fcount);        String remark = req.getParameter(&quot;remark&quot;);
+        System.out.println(&quot;fame=&quot; + fname + &quot;\n&quot; + &quot;price=&quot; + price + &quot;\n&quot; + &quot;count=&quot; + count + &quot;\n&quot; + &quot;remark=&quot; + remark + &quot;\n&quot;);
+        FruitDAOImpl fruitDAO = new FruitDAOImpl();
+        try &#123;
+            fruitDAO.insert(conn, new Fruit(5, fname, price, count, remark));
+           System.out.println(&quot;insert success&quot;);
+        &#125; catch (SQLException e) &#123;
+          throw new RuntimeException(e);
+         &#125;
+        &#125;
 
 &#125;
 </code></pre>
+<h2 id="4-配置web-xml"><a href="#4-配置web-xml" class="headerlink" title="4. 配置web.xml"></a>4. 配置web.xml</h2><pre><code class="java">&lt;!DOCTYPE web-app PUBLIC
+ &quot;-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN&quot;
+ &quot;http://java.sun.com/dtd/web-app_2_3.dtd&quot; &gt;
+
+&lt;web-app&gt;
+  &lt;display-name&gt;Archetype Created Web Application&lt;/display-name&gt;
+  &lt;servlet&gt;
+    &lt;servlet-name&gt;AddServlet&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;com.Servlets.AddServlets&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+ &lt;servlet-mapping&gt;
+   &lt;servlet-name&gt;AddServlet&lt;/servlet-name&gt;
+   &lt;url-pattern&gt;/add&lt;/url-pattern&gt;
+ &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+</code></pre>
+<h2 id="5-编写dao类"><a href="#5-编写dao类" class="headerlink" title="5.编写dao类"></a>5.编写dao类</h2><ul>
+<li><p>BaseDAO</p>
+<pre><code class="java">package com.dao;
+
+
+import org.testng.annotations.Test;
+import java.util.Collections;
+import java.lang.reflect.Field;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.alibaba.druid.util.JdbcUtils.close;
+
+
+/**
+ *针对数据表的通用的操作
+ */
+public abstract class BaseDAO &#123;
+
+    //通用的增删改操作
+    @Test
+    public int UpDate(Connection conn, String sql, Object... args) throws SQLException &#123;
+        PreparedStatement pstmt = null;
+        try &#123;
+            //预编译sql语句
+            pstmt = conn.prepareStatement(sql);
+            //填充占位符
+            for (int i = 0; i &lt; args.length; i++) &#123;
+                pstmt.setObject(i + 1, args[i]);
+            &#125;
+            //执行sql语句
+            return pstmt.executeUpdate();
+        &#125; catch (Exception e) &#123;
+            e.printStackTrace();
+        &#125; finally &#123;
+            //关闭资源
+            close(pstmt);
+        &#125;
+        return 0;
+    &#125;
+    //通用的查询操作，返回表中的一条记录
+    @Test
+    public &lt;T&gt; T getInstance(Connection conn, Class&lt;T&gt; clazz, String sql, Object... args) throws SQLException &#123;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try &#123;
+            //预编译sql语句
+            pstmt = conn.prepareStatement(sql);
+            //填充占位符
+            for (int i = 0; i &lt; args.length; i++) &#123;
+                pstmt.setObject(i + 1, args[i]);
+            &#125;
+            //执行sql语句
+            rs = pstmt.executeQuery();
+            //获取结果集的元数据
+            ResultSetMetaData rsmd = rs.getMetaData();
+            //获取列数
+            int columnCount = rsmd.getColumnCount();
+            if (rs.next()) &#123;
+                T t = clazz.newInstance();
+                //处理结果集一行数据中的每一列
+                for (int i = 0; i &lt; columnCount; i++) &#123;
+                    //获取列值
+                    Object columnValue = rs.getObject(i + 1);
+                    //获取每个列的列名
+                    String columnLabel = rsmd.getColumnLabel(i + 1);
+                    //给t对象指定的columnName属性，赋值为columnValue，通过反射
+                    Field field = clazz.getDeclaredField(columnLabel);
+                    field.setAccessible(true);
+                    field.set(t, columnValue);
+                &#125;
+                return t;
+            &#125;
+        &#125; catch (Exception e) &#123;
+            e.printStackTrace();
+        &#125; finally &#123;
+            close(rs);
+            close(pstmt);
+        &#125;
+        return null;
+    &#125;
+    //通用的查询操作，返回表中的多条记录构成的集合
+    @Test
+    public &lt;T&gt; List&lt;T&gt; getForList(Connection conn, Class&lt;T&gt; clazz, String sql, Object... args) throws SQLException &#123;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try &#123;
+            //预编译sql语句
+            pstmt = conn.prepareStatement(sql);
+            //填充占位符
+            for (int i = 0; i &lt; args.length; i++) &#123;
+                pstmt.setObject(i + 1, args[i]);
+            &#125;
+            //执行sql语句
+            rs = pstmt.executeQuery();
+            //获取结果集的元数据
+            ResultSetMetaData rsmd = rs.getMetaData();
+            //获取列数
+            int columnCount = rsmd.getColumnCount();
+            //创建集合对象
+            ArrayList&lt;T&gt; list = new ArrayList&lt;&gt;();
+            while (rs.next()) &#123;
+                T t = clazz.newInstance();
+                //处理结果集一行数据中的每一列
+                for (int i = 0; i &lt; columnCount; i++) &#123;
+                    //获取列值
+                    Object columnValue = rs.getObject(i + 1);
+                    //获取每个列的列名
+                    String columnLabel = rsmd.getColumnLabel(i + 1);
+                    //给t对象指定的columnName属性，赋值为columnValue，通过反射
+                    Field field = clazz.getDeclaredField(columnLabel);
+                    field.setAccessible(true);
+                    field.set(t, columnValue);
+                &#125;
+                list.add(t);
+            &#125;
+            return list;
+        &#125; catch (Exception e) &#123;
+            e.printStackTrace();
+        &#125; finally &#123;
+            close(rs);
+            close(pstmt);
+        &#125;
+        return null;
+    &#125;
+    //用于查询特殊值的通用的方法
+    @Test
+    public &lt;E&gt; E getValue(Connection conn, String sql, Object... args) &#123;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try &#123;
+            //预编译sql语句
+            pstmt = conn.prepareStatement(sql);
+            //填充占位符
+            for (int i = 0; i &lt; args.length; i++) &#123;
+                pstmt.setObject(i + 1, args[i]);
+            &#125;
+            //执行sql语句
+            rs = pstmt.executeQuery();
+            if (rs.next()) &#123;
+                return (E) rs.getObject(1);
+            &#125;
+        &#125; catch (Exception e) &#123;
+            e.printStackTrace();
+        &#125; finally &#123;
+            close(rs);
+            close(pstmt);
+        &#125;
+        return null;
+    &#125;
+
+
+&#125;
+</code></pre>
+</li>
+<li><p>编写FruitDAO</p>
+<pre><code class="java">package com.dao;
+
+import com.fruitpojo.Fruit;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.util.List;
+
+/**
+ *用来定义Fruit类的的规范操作
+ */
+public interface FruitDAO &#123;
+    /**
+     * 将fruit对象添加到数据库中
+     * @param fruit
+     */
+    void insert(Connection conn,Fruit fruit) throws SQLException;
+
+    /**
+     * 针对指定的id，删除表中的一条记录
+     * @param id
+     */
+    void deleteById(Connection conn,int id) throws SQLException;
+
+    /**
+     * 针对内存中的fruit对象，去修改数据表中指定的记录
+     * @param fruit
+     */
+    void update(Connection conn,Fruit fruit) throws SQLException;
+
+    /**
+     * 针对指定的id查询得到对应的Fruit对象
+     * @param id
+     */
+    Fruit getFruitById(Connection conn,int id) throws SQLException;
+
+    /**
+     * 查询表中的所有记录构成的集合
+     * @return
+     */
+    List&lt;Fruit&gt; getAll(Connection conn) throws SQLException;
+
+    /**
+     * 返回数据表中的数据的条目数
+     * @return
+     */
+    Long getCount(Connection conn);
+&#125;
+</code></pre>
+</li>
+<li><p>编写FruitDAOImpl</p>
+<pre><code class="java">package com.dao;
+import com.fruitpojo.Fruit;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
+public class FruitDAOImpl extends BaseDAO implements FruitDAO &#123;
+    @Override
+    public void insert(Connection conn, Fruit fruit) throws SQLException &#123;
+        String sql = &quot;insert into fruit(fid,fname,price,fcount,remark) values(?,?,?,?,?)&quot;;
+        UpDate(conn, sql, fruit.getFid(), fruit.getFname(), fruit.getPrice(), fruit.getFcount(), fruit.getRemark());
+    &#125;
+
+    @Override
+    public void deleteById(Connection conn, int id) throws SQLException &#123;
+        String sql = &quot;delete from fruit where fid = ?&quot;;
+        UpDate(conn, sql, id);
+    &#125;
+
+    @Override
+    public void update(Connection conn, Fruit fruit) throws SQLException &#123;
+        String sql = &quot;update fruit set fname = ?,price = ?,fcount = ?,remark = ? where fid = ?&quot;;
+        UpDate(conn, sql, fruit.getFname(), fruit.getPrice(), fruit.getFcount(), fruit.getRemark(), fruit.getFid());
+    &#125;
+
+    @Override
+    public Fruit getFruitById(Connection conn, int id) throws SQLException &#123;
+        String sql = &quot;select fid,fname,price,fcount,remark from fruit where fid = ?&quot;;
+        Fruit fruit = getInstance(conn, Fruit.class, sql, id);
+        return fruit;
+    &#125;
+
+    @Override
+    public List&lt;Fruit&gt; getAll(Connection conn) throws SQLException &#123;
+        String sql = &quot;select fid,fname,price,fcount,remark from fruit&quot;;
+        List&lt;Fruit&gt; list = getForList(conn, Fruit.class, sql);
+        return list;
+    &#125;
+
+    @Override
+    public Long getCount(Connection conn) &#123;
+        String sql = &quot;select count(*) from fruit&quot;;
+        Long count = getValue(conn, sql);
+        return count;
+    &#125;
+&#125;
+</code></pre>
+</li>
+</ul>
+<h2 id="6-导入MySQLjar包"><a href="#6-导入MySQLjar包" class="headerlink" title="6. 导入MySQLjar包"></a>6. 导入MySQLjar包</h2><ul>
+<li><p>在Maven中添加依赖</p>
+<pre><code class="java">   &lt;dependency&gt;
+            &lt;groupId&gt;mysql&lt;/groupId&gt;
+            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+            &lt;version&gt;8.0.28&lt;/version&gt;
+        &lt;/dependency&gt;
+</code></pre>
+</li>
+<li><p>如果现有Aricifact后来才添加的mysql的jar包，那么这个jar包并没有添加到部署包中，那么在ProjectSetting中有一个Problems中会有提示的，我们继续点击FIX选择add to…</p>
+</li>
+<li><p>在部署的时候修改application Context 然后回到server选项卡中，检查URL的值。URL指的是启动Tomcat启动后默认启动的浏览器的连接值。</p>
+</li>
+</ul>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls"
@@ -291,8 +610,8 @@ public class AddServlets extends HttpServlet &#123;
                     </dl>
                 </div>
                 <ul>
-                    <li><a href="/">6 <p>文章</p></a></li>
-                    <li><a href="/categories">7 <p>分类</p></a></li>
+                    <li><a href="/">8 <p>文章</p></a></li>
+                    <li><a href="/categories">8 <p>分类</p></a></li>
                     <li><a href="/tags">4 <p>标签</p></a></li>
                 </ul>
             </div>
@@ -302,7 +621,7 @@ public class AddServlets extends HttpServlet &#123;
             <div class="box sticky animated fadeInRight faster">
                 <div id="toc" class="subbox">
                     <h4>目录</h4>
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80-WebServlet"><span class="toc-number">1.</span> <span class="toc-text">一. WebServlet</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%9C%A8idea%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%96%B0%E5%BB%BAJavaWeb%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.1.</span> <span class="toc-text">1. 在idea中使用新建JavaWeb项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%9C%A8webapp%E7%9B%AE%E5%BD%95%E4%B8%8B%E6%96%B0%E5%BB%BA%E4%B8%80%E4%B8%AAhtml%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text">2.在webapp目录下新建一个html文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%96%B0%E5%BB%BA%E4%B8%80%E4%B8%AAServlet%E7%B1%BB%EF%BC%8C%E7%94%A8%E6%9D%A5%E8%8E%B7%E5%8F%96%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE"><span class="toc-number">1.3.</span> <span class="toc-text">3. 新建一个Servlet类，用来获取表单数据</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80-WebServlet"><span class="toc-number">1.</span> <span class="toc-text">一. WebServlet</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%9C%A8idea%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%96%B0%E5%BB%BAJavaWeb%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.1.</span> <span class="toc-text">1. 在idea中使用新建JavaWeb项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%9C%A8webapp%E7%9B%AE%E5%BD%95%E4%B8%8B%E6%96%B0%E5%BB%BA%E4%B8%80%E4%B8%AAhtml%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text">2.在webapp目录下新建一个html文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%96%B0%E5%BB%BA%E4%B8%80%E4%B8%AAServlet%E7%B1%BB%EF%BC%8C%E7%94%A8%E6%9D%A5%E8%8E%B7%E5%8F%96%E8%A1%A8%E5%8D%95%E6%95%B0%E6%8D%AE"><span class="toc-number">1.3.</span> <span class="toc-text">3. 新建一个Servlet类，用来获取表单数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E9%85%8D%E7%BD%AEweb-xml"><span class="toc-number">1.4.</span> <span class="toc-text">4. 配置web.xml</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%BC%96%E5%86%99dao%E7%B1%BB"><span class="toc-number">1.5.</span> <span class="toc-text">5.编写dao类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%AF%BC%E5%85%A5MySQLjar%E5%8C%85"><span class="toc-number">1.6.</span> <span class="toc-text">6. 导入MySQLjar包</span></a></li></ol></li></ol>
                 </div>
             </div>
             

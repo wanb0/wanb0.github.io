@@ -5,13 +5,18 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nginx快速入门 - Wan bo blog</title>
+    <title>隧道云 - Wan bo blog</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="TriDiamond Obsidian,"> 
-    <meta name="description" content="一 .初识nginx1.1 nginx特性及其优点
-Nginx (engine x) 是一个高性能的HTTP和反向代理web服务器，同时也提供了IMAP&amp;#x2F;POP3&amp;#x2F;SMTP服务。,"> 
+    <meta name="description" content="一.如何新增一个测试
+项目的结构如下,新建测试可以新建部门，在部门中新建项目，在项目中添加设备，在设备中添加通道
+
+
+
+1.新增一个部门（也可以用原有的部门）
+在超级管理员用户下，点击系统管理的部门,"> 
     <meta name="author" content="Wan BO"> 
     <link rel="alternative" href="atom.xml" title="Wan bo blog" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -75,7 +80,7 @@ Nginx (engine x) 是一个高性能的HTTP和反向代理web服务器，同时�
     <div class="navigation animated fadeIn fast delay-1s">
         <img id="home-icon" class="icon-home" src="/img/favicon.png" alt="" data-url="http://example.com">
         <div id="play-icon" title="Play/Pause" class="iconfont icon-play"></div>
-        <h3 class="subtitle">Nginx快速入门</h3>
+        <h3 class="subtitle">隧道云</h3>
         <div class="social">
             <!--        <div class="like-icon">-->
             <!--            <a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
@@ -108,22 +113,22 @@ Nginx (engine x) 是一个高性能的HTTP和反向代理web服务器，同时�
                 <a href="/categories/web"><b>「
                     </b>WEB<b> 」</b></a>
                 
-                十月 25, 2022
+                十一月 30, 2022
             </p>
-            <h3 class="post-title animated fadeInDown"><a href="/2022/10/25/nginx%20%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/" title="Nginx快速入门" class="">Nginx快速入门</a>
+            <h3 class="post-title animated fadeInDown"><a href="/2022/11/30/addTest/" title="隧道云" class="">隧道云</a>
             </h3>
             
             <p class="post-count animated fadeInDown">
                 
                 <span>
                     <b class="iconfont icon-text2"></b> <i>文章字数</i>
-                    5.9k
+                    3.4k
                 </span>
                 
                 
                 <span>
                     <b class="iconfont icon-timer__s"></b> <i>阅读约需</i>
-                    5 mins.
+                    3 mins.
                 </span>
                 
                 
@@ -136,7 +141,7 @@ Nginx (engine x) 是一个高性能的HTTP和反向代理web服务器，同时�
             </p>
             
             
-            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li></ul>
+            <ul class="animated fadeInDown post-tags-list" itemprop="keywords"><li class="animated fadeInDown post-tags-list-item"><a class="animated fadeInDown post-tags-list-link" href="/tags/web/" rel="tag">web</a></li></ul>
             
         </div>
     </div>
@@ -157,167 +162,88 @@ Nginx (engine x) 是一个高性能的HTTP和反向代理web服务器，同时�
 <div class="article">
     <div class='main'>
         <div class="content markdown animated fadeIn">
-            <h2 id="一-初识nginx"><a href="#一-初识nginx" class="headerlink" title="一 .初识nginx"></a>一 .初识nginx</h2><h3 id="1-1-nginx特性及其优点"><a href="#1-1-nginx特性及其优点" class="headerlink" title="1.1 nginx特性及其优点"></a>1.1 nginx特性及其优点</h3><ul>
-<li><p>Nginx (engine x) 是一个高性能的HTTP和反向代理web服务器，同时也提供了IMAP&#x2F;POP3&#x2F;SMTP服务。Nginx是由伊戈尔·赛索耶夫为俄罗斯访问量第二的Rambler.ru站点（俄文：Рамблер）开发的，第一个公开版本0.1.0发布于2004年10月4日。2011年6月1日，nginx 1.0.4发布。</p>
-</li>
-<li><p>其特点是<strong>占有内存少，并发能力强</strong>，事实上nginx的<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E5%B9%B6%E5%8F%91&spm=1001.2101.3001.7020">并发</a>能力在同类型的网页服务器中表现较好，中国大陆使用nginx网站用户有：百度、京东、新浪、网易、腾讯、淘宝等。在全球活跃的网站中有12.18%的使用比率，大约为2220万个网站。</p>
-</li>
-<li><p>Nginx 是一个安装非常的简单、配置文件非常简洁（还能够支持perl语法）、Bug非常少的服务。<strong>Nginx 启动特别容易，并且几乎可以做到7*24不间断运行，即使运行数个月也不需要重新启动</strong>。你还能够不间断服务的情况下进行软件版本的升级。</p>
-</li>
-<li><p>Nginx代码完全用C语言从头写成。官方数据测试表明能够支持高达 50,000 个并发连接数的响应。</p>
+            <h1 id="一-如何新增一个测试"><a href="#一-如何新增一个测试" class="headerlink" title="一.如何新增一个测试"></a>一.如何新增一个测试</h1><ul>
+<li><p><strong>项目的结构如下,新建测试可以新建部门，在部门中新建项目，在项目中添加设备，在设备中添加通道</strong></p>
+<p><img src="/../image/shouce/cengji.png"></p>
 </li>
 </ul>
-<h3 id="1-2-nginx产生的原因"><a href="#1-2-nginx产生的原因" class="headerlink" title="1.2 nginx产生的原因"></a>1.2 nginx产生的原因</h3><ul>
-<li><p>一个项目在初步开发的时候，并发量比较少，所以在低并发的情况下，一个jar包启动应用就够了，然后内部tomcat返回内容给用户。</p>
-<p><img src="/../image/ecs/nginx1.png"></p>
+<h2 id="1-新增一个部门（也可以用原有的部门）"><a href="#1-新增一个部门（也可以用原有的部门）" class="headerlink" title="1.新增一个部门（也可以用原有的部门）"></a>1.新增一个部门（也可以用原有的部门）</h2><ul>
+<li><p>在超级管理员用户下，点击系统管理的部门管理，即可新增一个项目</p>
+<p><img src="/../image/shouce/xinzengbumen.png"></p>
+</li>
+<li><p>填写项目的信息</p>
+<p><img src="/../image/shouce/tianjiabumenxinxi.png"></p>
+</li>
+<li><p>添加部门成功</p>
+<p><img src="/../image/shouce/xinzengbumenchenggong.png"></p>
 </li>
 </ul>
-<ul>
-<li><p>随着项目的使用和开展，使用平台的用户越来越多了，并发量慢慢增大了，这时候一台服务器满足不了我们的需求了</p>
-<p><img src="/../image/ecs/nginx2.png"></p>
+<h2 id="2-新增一个项目（也可以用原有的项目）"><a href="#2-新增一个项目（也可以用原有的项目）" class="headerlink" title="2.新增一个项目（也可以用原有的项目）"></a>2.新增一个项目（也可以用原有的项目）</h2><ul>
+<li><p>点击<strong>项目概况的项目列表</strong>，即可新增一个项目</p>
+<p><img src="/../image/shouce/xinzengxiangmu.png"></p>
 </li>
-<li><p>于是我们横向扩展，又增加了服务器。这个时候几个项目启动在不同的服务器上，用户要访问，就需要增加一个代理服务器了，通过代理服务器来帮我们转发和处理请求。</p>
-<p><img src="/../image/ecs/nginx3.png"></p>
+<li><p>编辑新增项目的信息**,填写带*的必填**项即可</p>
+<p><img src="/../image/shouce/xinzengxiangmuxinxi.png"></p>
 </li>
-</ul>
-<pre><code>我们希望这个代理服务器可以帮助我们接收用户的请求，然后将用户的请求按照规则帮我们转发到不同的服务器节点之上。这个过程用户是无感知的，用户并不知道是哪个服务器返回的结果，我们还希望他可以按照服务器的性能提供不同的权重选择。保证最佳体验！所以我们使用了Nginx。
-</code></pre>
-<h2 id="二-nginx的代理"><a href="#二-nginx的代理" class="headerlink" title="二.nginx的代理"></a>二.nginx的代理</h2><h3 id="2-1-nginx-的正向代理"><a href="#2-1-nginx-的正向代理" class="headerlink" title="2.1 nginx 的正向代理"></a>2.1 nginx 的正向代理</h3><ul>
-<li><p>正向代理：代理是代理客户端的<br><img src="/../image/ecs/zhengxiangdaili.png"></p>
-</li>
-<li><p>反向代理 ：代理是代理服务器的，所以用户是无感知的，比如，百度的服务器是在不同的服务器上，比如北京上海深圳都有百度的服务器，但是我们只需要搜索baidu.com就可以。</p>
-<p><img src="/../image/ecs/fanxiangdaili.png"></p>
+<li><p>项目添加成功！</p>
 </li>
 </ul>
-<h3 id="2-2-nginx-的负载策略"><a href="#2-2-nginx-的负载策略" class="headerlink" title="2.2 nginx 的负载策略"></a>2.2 nginx 的负载策略</h3><p><strong>Nginx提供的负载均衡策略有2种：内置策略和扩展策略。内置策略为轮询，加权轮询，Ip hash。扩展策略，就天马行空，只有你想不到的没有他做不到的。</strong></p>
-<ul>
-<li><p>轮询</p>
-<p><img src="/../image/ecs/lunxun.png"></p>
+<h2 id="3-新增一个设备"><a href="#3-新增一个设备" class="headerlink" title="3.新增一个设备"></a>3.新增一个设备</h2><ul>
+<li><p>点击配置信息，设备信息，即可新增一个设备</p>
+<p><img src="/../image/shouce/xinzengshebei.png"></p>
 </li>
-<li><p>加权轮询，因为可能不同服务器性能不一样，能接收的请求数量不同</p>
-<p><img src="/../image/ecs/jiaquanlunxun.png"></p>
+<li><p>编辑设备的所属部门，<strong>可以选择刚才新建的部门和项目，也可以用已有的部门和项目</strong>,设备编号和测试编号可以自定义填写</p>
+<p><img src="/../image/shouce/tianjiashebei.png"></p>
 </li>
-<li><p>iphash对客户端请求的ip进行hash操作，然后根据hash结果将同一个客户端ip的请求分发给同一台服务器进行处理，可以解决session不共享的问题。</p>
-<p><img src="/../image/ecs/iph.png"></p>
-</li>
-<li><p>动静分离，在我们的软件开发中，有些请求是需要后台处理的，有些请求是不需要经过后台处理的（如：css、html、jpg、js等等文件），这些不需要经过后台处理的文件称为静态文件。让动态网站里的动态网页根据一定规则把不变的资源和经常变的资源区分开来，动静资源做好了拆分以后，我们就可以根据静态资源的特点将其做缓存操作。提高资源响应的速度。</p>
+<li><p>添加设备成功！</p>
+<p><img src="/../image/shouce/tianjiashebeichenggong.png"></p>
 </li>
 </ul>
-<p>​       <img src="/../image/ecs/dongjingfenli.png"></p>
-<h2 id="三-nginx的安装和使用"><a href="#三-nginx的安装和使用" class="headerlink" title="三 . nginx的安装和使用"></a>三 . nginx的安装和使用</h2><ul>
-<li><p>去官网进行下载</p>
-<pre><code>http://nginx.org/en/download.html
-</code></pre>
-<p>选择正确的版本，我这里下载的是linux版本</p>
-<p><img src="/../image/ecs/nginxweb.png"></p>
+<h2 id="4-给新设备添加通道"><a href="#4-给新设备添加通道" class="headerlink" title="4.给新设备添加通道"></a>4.给新设备添加通道</h2><ul>
+<li><p>点击<strong>配置信息的通道信息</strong>，点击新增即可为新设备添加<strong>通道信息</strong></p>
+<p><img src="/../image/shouce/xinzengtongdao.png"></p>
 </li>
-<li><p>把下载好的压缩包通过命令或者SFTP传到服务器上，cd到传输的目录下，进行解压安装</p>
+<li><p>根据需求<strong>添加通道的信息</strong>，八路通道就添加八次，十六路添加十六次，也可以按照需求添加</p>
+<p><img src="/../image/shouce/tianjiatongdaoxinxi.png"></p>
+</li>
+<li><p><strong>添加成功</strong></p>
+<p><img src="/../image/shouce/xinzengtongdaoxinxi.png"></p>
+</li>
+<li><p>添加完通道信息就可以查看了</p>
+<p><img src="/../image/shouce/chakanxinxi.png"></p>
 </li>
 </ul>
-<pre><code class="bash">tar -zxvf nginx-1.22.1.tar.gz # 解压安装包
-</code></pre>
-<ul>
-<li>执行.&#x2F;configure自动配置</li>
-</ul>
-<pre><code class="bash">./configure #自动配置
+<h2 id="5-接收硬件的数据格式"><a href="#5-接收硬件的数据格式" class="headerlink" title="5.接收硬件的数据格式"></a>5.接收硬件的数据格式</h2><pre><code>数据的内容主要格式如下：
+&quot;01 38 46 32 37 32 37 29 46 2A 11 2B EE 29 EF 2B 14 EF&quot;
+主体为16进制字节数组
+长度为18位(8路)或34位（16路）
+第一位代表了设备号（数据库根据设备号查询对应的项目，以及每一路通道代表的数据类型）。
+中间的第2位到弟17位，（或者第2位到第33位）这些数值每两位为一组，一组代表一个通道的数据。
+最后一位即第18位（34位），为数据结束标志位，规定为”EF”或”ef”。若不是这个则表明数据不正确。
 </code></pre>
 <ul>
-<li>执行安装命令</li>
+<li>刚才新添加的<strong>设备号</strong>去<strong>配置信息的设备信息</strong>中查看，其中<strong>主键ID为5，设备号就是5，即发送数据时，以05开头即可</strong></li>
 </ul>
-<pre><code class="bash">make install #安装
-</code></pre>
-<p><img src="/../image/ecs/nginxinstall.png"></p>
+<p><img src="/../image/shouce/tianjiashebeichenggong.png"></p>
+<h1 id="二-给项目添加一个使用账号"><a href="#二-给项目添加一个使用账号" class="headerlink" title="二.给项目添加一个使用账号"></a>二.给项目添加一个使用账号</h1><h2 id="1-新增用户"><a href="#1-新增用户" class="headerlink" title="1.新增用户"></a>1.新增用户</h2><ul>
+<li><p>点击系统管理的用户管理，即可新增一个账号</p>
+<p><img src="/../image/shouce/xinzengyonghu.png"></p>
+</li>
+<li><p>编辑账户的<strong>所属部门以及角色信息</strong>等，<strong>不同的角色包含了不同的系统权限</strong></p>
+</li>
+</ul>
+<p><img src="/../image/shouce/yonghuxinxi2.png"></p>
 <ul>
-<li><p>到安装目录下的objs进行启动nginx</p>
-<p><img src="/../image/ecs/nginxmulu.png"></p>
-</li>
-<li><p>输入启动命令，没有报错就是启动成功</p>
-<p><img src="/../image/ecs/nginxstart.png"></p>
-<p>去浏览器检查默认的80端口，出现下面这个就是启动成功啦！云安全组也要放行80端口</p>
-<p><img src="/../image/ecs/welcomenginx.png"></p>
-<p>如何连接不上，检查阿里云安全组是否开放端口，或者服务器防火墙是否开放80端口:</p>
-<p><img src="/../image/ecs/duankou80.png"></p>
+<li><p>新用户创建好了</p>
+<p><img src="/../image/shouce/yonghuchuangjianchenggong.png"></p>
 </li>
 </ul>
-<ul>
-<li><p><strong>配置监听</strong></p>
-<pre><code>nginx的配置文件是conf目录下的nginx.conf，默认配置的nginx监听的端口为80，如果80端口被占用可以修改为未被占用的端口即可。
-</code></pre>
-<p><img src="/../image/ecs/peizhi.png"></p>
-<pre><code>当我们修改了nginx的配置文件nginx.conf 时，不需要关闭nginx后重新启动nginx，只需要执行命令 nginx -s reload 即可让改动生效
-</code></pre>
+<h2 id="2-自定义赋予权限"><a href="#2-自定义赋予权限" class="headerlink" title="2.自定义赋予权限"></a>2.自定义赋予权限</h2><ul>
+<li><p>上面创建的用户是<strong>项目用户</strong>角色</p>
+<p><strong>项目用户</strong>包含的权限可以在角色管理中查看或者根据项目需求修改</p>
+<p><img src="/../image/shouce/quanxian1.png"></p>
 </li>
-<li><p><strong>关闭Nginx</strong></p>
-<p>如果使用cmd命令窗口启动nginx， 关闭cmd窗口是不能结束nginx进程的，可使用两种方法关闭nginx</p>
-<p>(1)输入nginx命令 nginx -s stop(快速停止nginx) 或 nginx -s quit(完整有序的停止nginx)</p>
-<p>(2)使用taskkill taskkill &#x2F;f &#x2F;t &#x2F;im nginx.exe</p>
-<pre><code class="bash">taskkill是用来终止进程的，
-/f是强制终止 .
-/t终止指定的进程和任何由此启动的子进程。
-/im示指定的进程名称 .
-</code></pre>
-</li>
-</ul>
-<h2 id="四-nginx命令"><a href="#四-nginx命令" class="headerlink" title="四. nginx命令"></a>四. nginx命令</h2><pre><code class="bash">cd /usr/local/nginx/sbin/
-./nginx  启动
-./nginx -s stop  停止
-./nginx -s quit  安全退出
-./nginx -s reload  重新加载配置文件
-ps aux|grep nginx  查看nginx进程
-</code></pre>
-<p>防火墙的相关命令:</p>
-<pre><code class="bash"># 开启
-service firewalld start
-# 重启
-service firewalld restart
-# 关闭
-service firewalld stop
-# 查看防火墙规则
-firewall-cmd --list-all
-# 查询端口是否开放
-firewall-cmd --query-port=8080/tcp
-# 开放80端口
-firewall-cmd --permanent --add-port=80/tcp
-# 移除端口
-firewall-cmd --permanent --remove-port=8080/tcp
-#重启防火墙(修改配置后要重启防火墙)
-firewall-cmd --reload
-# 参数解释
-1、firwall-cmd：是Linux提供的操作firewall的一个工具；
-2、--permanent：表示设置为持久；
-3、--add-port：标识添加的端口；
-</code></pre>
-<h2 id="五-尝试使用nginx"><a href="#五-尝试使用nginx" class="headerlink" title="五. 尝试使用nginx"></a>五. 尝试使用nginx</h2><ul>
-<li>先进行配置文件的修改</li>
-</ul>
-<pre><code class="bash">http &#123;
-    ...
-    upstream cvzhanshi&#123;
-        server 127.0.0.1:8082/ weight=1;
-        server 127.0.0.1:8081/ weight=1;
-    &#125;
-
-
-    server &#123;
-        listen       80;
-        server_name  localhost;
-
-        location / &#123;
-            root   html;
-            index  index.html index.htm;
-            proxy_pass http://cvzhanshi;
-        &#125;
-        ...
-&#125;
-</code></pre>
-<ul>
-<li><p>启动两个端口的项目</p>
-<p><img src="/../image/ecs/qiyongshuangduankou.png"></p>
-</li>
-<li><p>启动nginx</p>
-</li>
-<li><p>进行测试</p>
-<p><img src="/../image/ecs/testnginx.png"></p>
+<li><p><img src="/../image/shouce/quanxian2.png"></p>
 </li>
 </ul>
 
@@ -383,7 +309,7 @@ firewall-cmd --reload
             <div class="box sticky animated fadeInRight faster">
                 <div id="toc" class="subbox">
                     <h4>目录</h4>
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80-%E5%88%9D%E8%AF%86nginx"><span class="toc-number">1.</span> <span class="toc-text">一 .初识nginx</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-nginx%E7%89%B9%E6%80%A7%E5%8F%8A%E5%85%B6%E4%BC%98%E7%82%B9"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 nginx特性及其优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-nginx%E4%BA%A7%E7%94%9F%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 nginx产生的原因</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C-nginx%E7%9A%84%E4%BB%A3%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">二.nginx的代理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-nginx-%E7%9A%84%E6%AD%A3%E5%90%91%E4%BB%A3%E7%90%86"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 nginx 的正向代理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-nginx-%E7%9A%84%E8%B4%9F%E8%BD%BD%E7%AD%96%E7%95%A5"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 nginx 的负载策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89-nginx%E7%9A%84%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">三 . nginx的安装和使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B-nginx%E5%91%BD%E4%BB%A4"><span class="toc-number">4.</span> <span class="toc-text">四. nginx命令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94-%E5%B0%9D%E8%AF%95%E4%BD%BF%E7%94%A8nginx"><span class="toc-number">5.</span> <span class="toc-text">五. 尝试使用nginx</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80-%E5%A6%82%E4%BD%95%E6%96%B0%E5%A2%9E%E4%B8%80%E4%B8%AA%E6%B5%8B%E8%AF%95"><span class="toc-number">1.</span> <span class="toc-text">一.如何新增一个测试</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%96%B0%E5%A2%9E%E4%B8%80%E4%B8%AA%E9%83%A8%E9%97%A8%EF%BC%88%E4%B9%9F%E5%8F%AF%E4%BB%A5%E7%94%A8%E5%8E%9F%E6%9C%89%E7%9A%84%E9%83%A8%E9%97%A8%EF%BC%89"><span class="toc-number">1.1.</span> <span class="toc-text">1.新增一个部门（也可以用原有的部门）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%96%B0%E5%A2%9E%E4%B8%80%E4%B8%AA%E9%A1%B9%E7%9B%AE%EF%BC%88%E4%B9%9F%E5%8F%AF%E4%BB%A5%E7%94%A8%E5%8E%9F%E6%9C%89%E7%9A%84%E9%A1%B9%E7%9B%AE%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">2.新增一个项目（也可以用原有的项目）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%96%B0%E5%A2%9E%E4%B8%80%E4%B8%AA%E8%AE%BE%E5%A4%87"><span class="toc-number">1.3.</span> <span class="toc-text">3.新增一个设备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%BB%99%E6%96%B0%E8%AE%BE%E5%A4%87%E6%B7%BB%E5%8A%A0%E9%80%9A%E9%81%93"><span class="toc-number">1.4.</span> <span class="toc-text">4.给新设备添加通道</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%8E%A5%E6%94%B6%E7%A1%AC%E4%BB%B6%E7%9A%84%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.5.</span> <span class="toc-text">5.接收硬件的数据格式</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C-%E7%BB%99%E9%A1%B9%E7%9B%AE%E6%B7%BB%E5%8A%A0%E4%B8%80%E4%B8%AA%E4%BD%BF%E7%94%A8%E8%B4%A6%E5%8F%B7"><span class="toc-number">2.</span> <span class="toc-text">二.给项目添加一个使用账号</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%96%B0%E5%A2%9E%E7%94%A8%E6%88%B7"><span class="toc-number">2.1.</span> <span class="toc-text">1.新增用户</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%87%AA%E5%AE%9A%E4%B9%89%E8%B5%8B%E4%BA%88%E6%9D%83%E9%99%90"><span class="toc-number">2.2.</span> <span class="toc-text">2.自定义赋予权限</span></a></li></ol></li></ol>
                 </div>
             </div>
             
